@@ -71,6 +71,66 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-firstpost" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/02/13/firstpost/" class="article-date">
+  <time class="dt-published" datetime="2023-02-13T12:43:15.000Z" itemprop="datePublished">2023-02-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2023/02/13/firstpost/">How to post a new article and establish local site with hexo</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Use-of-Hexo"><a href="#Use-of-Hexo" class="headerlink" title="Use of Hexo"></a>Use of Hexo</h1><p>Thanks to Chatgpt which points out the right way to use Hexo to establish a local site and pub it to github service. Here are the record to publish a new article into github </p>
+<h2 id="make-a-new-article"><a href="#make-a-new-article" class="headerlink" title="make a new article"></a>make a new article</h2><ol>
+<li>enter hexo site dir</li>
+<li>create a new article <code>hexo new articletitle</code> articletitle is the title of your article. Then you will find a new markdown file named <code>articletitle.md</code> in the <code>source/_post</code> dir</li>
+<li>edit the markdown file and add tags to it</li>
+</ol>
+<h2 id="post-local-dir-to-github-page-service"><a href="#post-local-dir-to-github-page-service" class="headerlink" title="post local dir to github page service"></a>post local dir to github page service</h2><p>When you encounter a newly created hexo repo(without relationship with any github pages)</p>
+<ol>
+<li>create repo in remote github service</li>
+<li>config the _config.yml file deploy sector.<ol>
+<li>type:git</li>
+<li>repo:Your github.io repo</li>
+<li>branch:master</li>
+</ol>
+</li>
+<li>install git deploy extension with <code>npm install hexo-deployer-git --save</code>(This may fail because of file lock,for example you have opened the github repo locally in a text editor)</li>
+<li>generate static pages with <code>hexo generate</code></li>
+<li>deploy into pages <code>hexo deploy</code></li>
+<li>you will see your pages later</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/02/13/firstpost/" data-id="cle2thxgy0000gg8w03frcp5w" data-title="How to post a new article and establish local site with hexo" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Use-of-Hexo/" rel="tag">Use of Hexo</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-hello-world" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2023/02/13/hello-world/" class="article-date">
@@ -132,9 +192,23 @@
 
   
     
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Use-of-Hexo/" rel="tag">Use of Hexo</a></li></ul>
+    </div>
+  </div>
+
 
   
     
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Use-of-Hexo/" style="font-size: 10px;">Use of Hexo</a>
+    </div>
+  </div>
+
   
     
   <div class="widget-wrap">
@@ -151,6 +225,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2023/02/13/firstpost/">How to post a new article and establish local site with hexo</a>
+          </li>
         
           <li>
             <a href="/2023/02/13/hello-world/">Hello World</a>
