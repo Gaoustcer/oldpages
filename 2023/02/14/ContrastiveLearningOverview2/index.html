@@ -6,16 +6,16 @@
   
   <title>ContrastiveLearningOverview2 | Gaoustcer blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="对比无监督学习综述(II) Moco Contribution  对比学习$$字典查询 队列+动量编码器解决  字典信息不一致 每次更新参数需要重新计算所有key embedding导致较大计算开销(而不是动量更新特征)   实现  数据增强，随机采样图片的子模块 \(\tau &#x3D; 0.07\)  Moco-v2 在Moco基础上结合SimCLR提升Moco">
+  <meta name="description" content="对比无监督学习综述(II)MocoContribution 对比学习$\to $字典查询 队列+动量编码器解决 字典信息不一致 每次更新参数需要重新计算所有key embedding导致较大计算开销(而不是动量更新特征)    实现 数据增强，随机采样图片的子模块 $\tau &#x3D; 0.07$  Moco-v2在Moco基础上结合SimCLR提升Moco  加了MLP 数据增强 更多epoch  S">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ContrastiveLearningOverview2">
 <meta property="og:url" content="http://example.com/2023/02/14/ContrastiveLearningOverview2/index.html">
 <meta property="og:site_name" content="Gaoustcer blog">
-<meta property="og:description" content="对比无监督学习综述(II) Moco Contribution  对比学习$$字典查询 队列+动量编码器解决  字典信息不一致 每次更新参数需要重新计算所有key embedding导致较大计算开销(而不是动量更新特征)   实现  数据增强，随机采样图片的子模块 \(\tau &#x3D; 0.07\)  Moco-v2 在Moco基础上结合SimCLR提升Moco">
+<meta property="og:description" content="对比无监督学习综述(II)MocoContribution 对比学习$\to $字典查询 队列+动量编码器解决 字典信息不一致 每次更新参数需要重新计算所有key embedding导致较大计算开销(而不是动量更新特征)    实现 数据增强，随机采样图片的子模块 $\tau &#x3D; 0.07$  Moco-v2在Moco基础上结合SimCLR提升Moco  加了MLP 数据增强 更多epoch  S">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://s2.loli.net/2023/02/14/H4xqmeBMDCNdSWQ.png">
 <meta property="article:published_time" content="2023-02-14T04:15:07.000Z">
-<meta property="article:modified_time" content="2023-02-14T07:50:58.027Z">
+<meta property="article:modified_time" content="2023-02-14T14:25:55.678Z">
 <meta property="article:author" content="Haihan Gao">
 <meta property="article:tag" content="Contrastive Learning, Deep Learning, Unsupervised Learning">
 <meta name="twitter:card" content="summary">
@@ -102,104 +102,86 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h1 id="对比无监督学习综述ii">对比无监督学习综述(II)</h1>
-<h2 id="moco">Moco</h2>
-<h3 id="contribution">Contribution</h3>
-<ol type="1">
-<li>对比学习$$字典查询</li>
-<li>队列+动量编码器解决
-<ol type="1">
+        <h1 id="对比无监督学习综述-II"><a href="#对比无监督学习综述-II" class="headerlink" title="对比无监督学习综述(II)"></a>对比无监督学习综述(II)</h1><h2 id="Moco"><a href="#Moco" class="headerlink" title="Moco"></a>Moco</h2><h3 id="Contribution"><a href="#Contribution" class="headerlink" title="Contribution"></a>Contribution</h3><ol>
+<li>对比学习$\to $字典查询</li>
+<li>队列+动量编码器解决<ol>
 <li>字典信息不一致</li>
 <li>每次更新参数需要重新计算所有key embedding导致较大计算开销(而不是动量更新特征)</li>
-</ol></li>
 </ol>
-<h3 id="实现">实现</h3>
-<ol type="1">
+</li>
+</ol>
+<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><ol>
 <li>数据增强，随机采样图片的子模块</li>
-<li><span class="math inline">\(\tau = 0.07\)</span></li>
+<li>$\tau = 0.07$</li>
 </ol>
-<h3 id="moco-v2">Moco-v2</h3>
-<p>在Moco基础上结合SimCLR提升Moco</p>
-<ol type="1">
+<h3 id="Moco-v2"><a href="#Moco-v2" class="headerlink" title="Moco-v2"></a>Moco-v2</h3><p>在Moco基础上结合SimCLR提升Moco</p>
+<ol>
 <li>加了MLP</li>
 <li>数据增强</li>
 <li>更多epoch</li>
 </ol>
-<h2 id="simclrsimple-contrastive-learning">SimCLR(Simple Contrastive Learning)</h2>
-<h3 id="methods">Methods</h3>
-<p>对Mini-batch中的所有图片<span class="math inline">\(x\)</span>，数据增强得到 <span class="math display">\[
-\hat x_i,\hat x_j
-\]</span> 互为正样本，和batch中之外的图片增强的样本互为负样本，通过共享权重的编码器得到表示 <span class="math display">\[
-h_i = f(\hat x_i),h_j = f(\hat x_j)
-\]</span> 引入一个mlp层 <span class="math inline">\(g(\cdot)\)</span> <span class="math display">\[
-z_i = g(h_i),z_j = g(h_j)
-\]</span> 在<span class="math inline">\(z_i,z_j\)</span>之间做对比学习，采用normalized temperature-scaled交叉熵函数</p>
-<ol type="1">
+<h2 id="SimCLR-Simple-Contrastive-Learning"><a href="#SimCLR-Simple-Contrastive-Learning" class="headerlink" title="SimCLR(Simple Contrastive Learning)"></a>SimCLR(Simple Contrastive Learning)</h2><h3 id="Methods"><a href="#Methods" class="headerlink" title="Methods"></a>Methods</h3><p>对Mini-batch中的所有图片$x$，数据增强得到</p>
+<script type="math/tex; mode=display">
+\hat x_i,\hat x_j</script><p>互为正样本，和batch中之外的图片增强的样本互为负样本，通过共享权重的编码器得到表示</p>
+<script type="math/tex; mode=display">
+h_i = f(\hat x_i),h_j = f(\hat x_j)</script><p>引入一个mlp层 $g(\cdot)$</p>
+<script type="math/tex; mode=display">
+z_i = g(h_i),z_j = g(h_j)</script><p>在$z_i,z_j$之间做对比学习，采用normalized temperature-scaled交叉熵函数</p>
+<ol>
 <li>归一化特征</li>
 <li>temperature作为loss函数的权重</li>
 </ol>
-<p>mlp层<span class="math inline">\(g(\cdot)\)</span>仅仅用于训练，下游任务中只用h特征(预训练)。本文另一个特点是无需计算所有正负样本，所有正负样本对来自同一个mini-batch</p>
-<h3 id="前向工作invaspread">前向工作：InvaSpread</h3>
-<p>mini-batch中相似的图片应该得到相似的特征表示(数据增强得到正样本)</p>
+<p>mlp层$g(\cdot)$仅仅用于训练，下游任务中只用h特征(预训练)。本文另一个特点是无需计算所有正负样本，所有正负样本对来自同一个mini-batch</p>
+<h3 id="前向工作：InvaSpread"><a href="#前向工作：InvaSpread" class="headerlink" title="前向工作：InvaSpread"></a>前向工作：InvaSpread</h3><p>mini-batch中相似的图片应该得到相似的特征表示(数据增强得到正样本)</p>
 <blockquote>
 <p>和SimCLR相比batch_size选择的太小，导致负样本不是特别多(更多的数据增强，更大的batch_size)</p>
 </blockquote>
-<h3 id="experiment">Experiment</h3>
-<ol type="1">
+<h3 id="Experiment"><a href="#Experiment" class="headerlink" title="Experiment"></a>Experiment</h3><ol>
 <li>随机的裁剪和颜色变换是最有用的image trans</li>
-<li>非线性编码器<span class="math inline">\(g(\cdot)\)</span>比仅仅加一层MLP存在性能提升，但是特征维度并没有太大的影响</li>
+<li>非线性编码器$g(\cdot)$比仅仅加一层MLP存在性能提升，但是特征维度并没有太大的影响</li>
 </ol>
-<h3 id="simclrv2半监督学习">SimCLRv2（半监督学习）</h3>
-<ol type="1">
+<h3 id="SimCLRv2（半监督学习）"><a href="#SimCLRv2（半监督学习）" class="headerlink" title="SimCLRv2（半监督学习）"></a>SimCLRv2（半监督学习）</h3><ol>
 <li>大量无监督数据对比学习方法预训练</li>
 <li>少量有标签数据微调</li>
 <li>生成teacher模型，为无监督数据打标签</li>
 </ol>
 <p>相比SimCLR</p>
-<ol type="1">
+<ol>
 <li>更大的模型(backbone)</li>
-<li>更深的非线性函数<span class="math inline">\(g(\cdot)\)</span></li>
+<li>更深的非线性函数$g(\cdot)$</li>
 <li>动量编码器</li>
 </ol>
-<h2 id="swavunsupervised-learning-of-visual-features-by-contrasting-clustering-assignment">SwAV(Unsupervised Learning of Visual Features by Contrasting Clustering Assignment)</h2>
-<h3 id="motivation">motivation</h3>
-<p>同一场景下对应不同view，给定一个view下的特征，能否推断另一view下的特征。</p>
-<h3 id="compared-with-contrastive-learning">compared with Contrastive Learning</h3>
-<figure>
-<img src="https://s2.loli.net/2023/02/14/H4xqmeBMDCNdSWQ.png" alt="image-20230214115041760" /><figcaption aria-hidden="true">image-20230214115041760</figcaption>
-</figure>
-<p>instance classification这个任务要求自己和自己比，这个工作要求每个样本和<strong>聚类中心</strong>对比，<span class="math inline">\(c\in \R^{D\times K}\)</span></p>
-<ol type="1">
+<h2 id="SwAV-Unsupervised-Learning-of-Visual-Features-by-Contrasting-Clustering-Assignment"><a href="#SwAV-Unsupervised-Learning-of-Visual-Features-by-Contrasting-Clustering-Assignment" class="headerlink" title="SwAV(Unsupervised Learning of Visual Features by Contrasting Clustering Assignment)"></a>SwAV(Unsupervised Learning of Visual Features by Contrasting Clustering Assignment)</h2><h3 id="motivation"><a href="#motivation" class="headerlink" title="motivation"></a>motivation</h3><p>同一场景下对应不同view，给定一个view下的特征，能否推断另一view下的特征。</p>
+<h3 id="compared-with-Contrastive-Learning"><a href="#compared-with-Contrastive-Learning" class="headerlink" title="compared with Contrastive Learning"></a>compared with Contrastive Learning</h3><p><img src="https://s2.loli.net/2023/02/14/H4xqmeBMDCNdSWQ.png" alt="image-20230214115041760"></p>
+<p>instance classification这个任务要求自己和自己比，这个工作要求每个样本和<strong>聚类中心</strong>对比，$c\in \R^{D\times K}$</p>
+<ol>
 <li>K c dimension of center embedding</li>
 <li>D number of centers</li>
 </ol>
-<p>生成同一样本两种数据增强的提取的特征 <span class="math display">\[
-x\to z_1,z_2
-\]</span> 基于center生成两个目标哦 <span class="math display">\[
-c\times z_1\to Q_1,c\times z_2\to Q_2
-\]</span> 如果<span class="math inline">\(z_1,z_2\)</span>相似，可以借助<span class="math inline">\(z_1\)</span>和c预测<span class="math inline">\(Q_2\)</span></p>
-<p><span class="math inline">\(Q\)</span>在某种程度上是latent embedding z的预测结果的ground truth，通过swap prediction进行训练</p>
-<h3 id="advantage">Advantage</h3>
-<ol type="1">
+<p>生成同一样本两种数据增强的提取的特征</p>
+<script type="math/tex; mode=display">
+x\to z_1,z_2</script><p>基于center生成两个目标哦</p>
+<script type="math/tex; mode=display">
+c\times z_1\to Q_1,c\times z_2\to Q_2</script><p>如果$z_1,z_2$相似，可以借助$z_1$和c预测$Q_2$</p>
+<p>$Q$在某种程度上是latent embedding z的预测结果的ground truth，通过swap prediction进行训练</p>
+<h3 id="Advantage"><a href="#Advantage" class="headerlink" title="Advantage"></a>Advantage</h3><ol>
 <li>减少负样本的依赖</li>
 <li>聚类中心具有特定语义含义(代表某一类数据)，传统Contrastive Learning中不能区分不同负样本和正样本的相似程度(类别不均衡)</li>
 </ol>
-<h3 id="multi-crop">Multi-Crop</h3>
-<p>生成来自一个图片的两个正样本，往往正样本之间有重叠，希望同时使用多个正样本同时不增加计算成本</p>
-<ol type="1">
+<h3 id="Multi-Crop"><a href="#Multi-Crop" class="headerlink" title="Multi-Crop"></a>Multi-Crop</h3><p>生成来自一个图片的两个正样本，往往正样本之间有重叠，希望同时使用多个正样本同时不增加计算成本</p>
+<ol>
 <li>选择两个较大的crop学习全局特征</li>
 <li>选择若干较小crop学习局部特征</li>
 </ol>
 <blockquote>
 <p>Multi-view</p>
 </blockquote>
-<h3 id="refer">Refer</h3>
-<p>Deep clustering</p>
+<h3 id="Refer"><a href="#Refer" class="headerlink" title="Refer"></a>Refer</h3><p>Deep clustering</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2023/02/14/ContrastiveLearningOverview2/" data-id="cle4c34dr00031s8w97b31pie" data-title="ContrastiveLearningOverview2" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2023/02/14/ContrastiveLearningOverview2/" data-id="cle4c7st80000688w8dsr0cbt" data-title="ContrastiveLearningOverview2" class="article-share-link">Share</a>
       
       
       
@@ -324,20 +306,5 @@ c\times z_1\to Q_1,c\times z_2\to Q_2
 
 
   </div>
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {
-            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-            processEscapes: true
-        }
-    });
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax();
-        for (var i = 0; i < all.length; ++i)
-            all[i].SourceElement().parentNode.className += ' has-jax';
-    });
-</script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 </body>
 </html>
