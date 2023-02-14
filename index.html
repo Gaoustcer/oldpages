@@ -4,17 +4,17 @@
   <meta charset="utf-8">
   
   
-  <title>Gaoustcer homepage</title>
+  <title>Gaoustcer blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta property="og:type" content="website">
-<meta property="og:title" content="Gaoustcer homepage">
+<meta property="og:title" content="Gaoustcer blog">
 <meta property="og:url" content="http://example.com/index.html">
-<meta property="og:site_name" content="Gaoustcer homepage">
+<meta property="og:site_name" content="Gaoustcer blog">
 <meta property="og:locale" content="en_US">
-<meta property="article:author" content="John Doe">
+<meta property="article:author" content="Haihan Gao">
 <meta name="twitter:card" content="summary">
   
-    <link rel="alternate" href="/atom.xml" title="Gaoustcer homepage" type="application/atom+xml">
+    <link rel="alternate" href="/atom.xml" title="Gaoustcer blog" type="application/atom+xml">
   
   
     <link rel="shortcut icon" href="/favicon.png">
@@ -42,7 +42,7 @@
   <div id="header-outer" class="outer">
     <div id="header-title" class="inner">
       <h1 id="logo-wrap">
-        <a href="/" id="logo">Gaoustcer homepage</a>
+        <a href="/" id="logo">Gaoustcer blog</a>
       </h1>
       
     </div>
@@ -93,76 +93,104 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h1 id="对比无监督学习综述-II"><a href="#对比无监督学习综述-II" class="headerlink" title="对比无监督学习综述(II)"></a>对比无监督学习综述(II)</h1><h2 id="Moco"><a href="#Moco" class="headerlink" title="Moco"></a>Moco</h2><h3 id="Contribution"><a href="#Contribution" class="headerlink" title="Contribution"></a>Contribution</h3><ol>
-<li>对比学习$\to $字典查询</li>
-<li>队列+动量编码器解决<ol>
+        <h1 id="对比无监督学习综述ii">对比无监督学习综述(II)</h1>
+<h2 id="moco">Moco</h2>
+<h3 id="contribution">Contribution</h3>
+<ol type="1">
+<li>对比学习$$字典查询</li>
+<li>队列+动量编码器解决
+<ol type="1">
 <li>字典信息不一致</li>
 <li>每次更新参数需要重新计算所有key embedding导致较大计算开销(而不是动量更新特征)</li>
+</ol></li>
 </ol>
-</li>
-</ol>
-<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><ol>
+<h3 id="实现">实现</h3>
+<ol type="1">
 <li>数据增强，随机采样图片的子模块</li>
-<li>$\tau &#x3D; 0.07$</li>
+<li><span class="math inline">\(\tau = 0.07\)</span></li>
 </ol>
-<h3 id="Moco-v2"><a href="#Moco-v2" class="headerlink" title="Moco-v2"></a>Moco-v2</h3><p>在Moco基础上结合SimCLR提升Moco</p>
-<ol>
+<h3 id="moco-v2">Moco-v2</h3>
+<p>在Moco基础上结合SimCLR提升Moco</p>
+<ol type="1">
 <li>加了MLP</li>
 <li>数据增强</li>
 <li>更多epoch</li>
 </ol>
-<h2 id="SimCLR-Simple-Contrastive-Learning"><a href="#SimCLR-Simple-Contrastive-Learning" class="headerlink" title="SimCLR(Simple Contrastive Learning)"></a>SimCLR(Simple Contrastive Learning)</h2><h3 id="Methods"><a href="#Methods" class="headerlink" title="Methods"></a>Methods</h3><p>对Mini-batch中的所有图片$x$，数据增强得到<br>$$<br>\hat x_i,\hat x_j<br>$$<br>互为正样本，和batch中之外的图片增强的样本互为负样本，通过共享权重的编码器得到表示<br>$$<br>h_i &#x3D; f(\hat x_i),h_j &#x3D; f(\hat x_j)<br>$$<br>引入一个mlp层 $g(\cdot)$<br>$$<br>z_i &#x3D; g(h_i),z_j &#x3D; g(h_j)<br>$$<br>在$z_i,z_j$之间做对比学习，采用normalized temperature-scaled交叉熵函数</p>
-<ol>
+<h2 id="simclrsimple-contrastive-learning">SimCLR(Simple Contrastive Learning)</h2>
+<h3 id="methods">Methods</h3>
+<p>对Mini-batch中的所有图片<span class="math inline">\(x\)</span>，数据增强得到 <span class="math display">\[
+\hat x_i,\hat x_j
+\]</span> 互为正样本，和batch中之外的图片增强的样本互为负样本，通过共享权重的编码器得到表示 <span class="math display">\[
+h_i = f(\hat x_i),h_j = f(\hat x_j)
+\]</span> 引入一个mlp层 <span class="math inline">\(g(\cdot)\)</span> <span class="math display">\[
+z_i = g(h_i),z_j = g(h_j)
+\]</span> 在<span class="math inline">\(z_i,z_j\)</span>之间做对比学习，采用normalized temperature-scaled交叉熵函数</p>
+<ol type="1">
 <li>归一化特征</li>
 <li>temperature作为loss函数的权重</li>
 </ol>
-<p>mlp层$g(\cdot)$仅仅用于训练，下游任务中只用h特征(预训练)。本文另一个特点是无需计算所有正负样本，所有正负样本对来自同一个mini-batch</p>
-<h3 id="前向工作：InvaSpread"><a href="#前向工作：InvaSpread" class="headerlink" title="前向工作：InvaSpread"></a>前向工作：InvaSpread</h3><p>mini-batch中相似的图片应该得到相似的特征表示(数据增强得到正样本)</p>
+<p>mlp层<span class="math inline">\(g(\cdot)\)</span>仅仅用于训练，下游任务中只用h特征(预训练)。本文另一个特点是无需计算所有正负样本，所有正负样本对来自同一个mini-batch</p>
+<h3 id="前向工作invaspread">前向工作：InvaSpread</h3>
+<p>mini-batch中相似的图片应该得到相似的特征表示(数据增强得到正样本)</p>
 <blockquote>
 <p>和SimCLR相比batch_size选择的太小，导致负样本不是特别多(更多的数据增强，更大的batch_size)</p>
 </blockquote>
-<h3 id="Experiment"><a href="#Experiment" class="headerlink" title="Experiment"></a>Experiment</h3><ol>
+<h3 id="experiment">Experiment</h3>
+<ol type="1">
 <li>随机的裁剪和颜色变换是最有用的image trans</li>
-<li>非线性编码器$g(\cdot)$比仅仅加一层MLP存在性能提升，但是特征维度并没有太大的影响</li>
+<li>非线性编码器<span class="math inline">\(g(\cdot)\)</span>比仅仅加一层MLP存在性能提升，但是特征维度并没有太大的影响</li>
 </ol>
-<h3 id="SimCLRv2（半监督学习）"><a href="#SimCLRv2（半监督学习）" class="headerlink" title="SimCLRv2（半监督学习）"></a>SimCLRv2（半监督学习）</h3><ol>
+<h3 id="simclrv2半监督学习">SimCLRv2（半监督学习）</h3>
+<ol type="1">
 <li>大量无监督数据对比学习方法预训练</li>
 <li>少量有标签数据微调</li>
 <li>生成teacher模型，为无监督数据打标签</li>
 </ol>
 <p>相比SimCLR</p>
-<ol>
+<ol type="1">
 <li>更大的模型(backbone)</li>
-<li>更深的非线性函数$g(\cdot)$</li>
+<li>更深的非线性函数<span class="math inline">\(g(\cdot)\)</span></li>
 <li>动量编码器</li>
 </ol>
-<h2 id="SwAV-Unsupervised-Learning-of-Visual-Features-by-Contrasting-Clustering-Assignment"><a href="#SwAV-Unsupervised-Learning-of-Visual-Features-by-Contrasting-Clustering-Assignment" class="headerlink" title="SwAV(Unsupervised Learning of Visual Features by Contrasting Clustering Assignment)"></a>SwAV(Unsupervised Learning of Visual Features by Contrasting Clustering Assignment)</h2><h3 id="motivation"><a href="#motivation" class="headerlink" title="motivation"></a>motivation</h3><p>同一场景下对应不同view，给定一个view下的特征，能否推断另一view下的特征。</p>
-<h3 id="compared-with-Contrastive-Learning"><a href="#compared-with-Contrastive-Learning" class="headerlink" title="compared with Contrastive Learning"></a>compared with Contrastive Learning</h3><p><img src="https://s2.loli.net/2023/02/14/H4xqmeBMDCNdSWQ.png" alt="image-20230214115041760"></p>
-<p>instance classification这个任务要求自己和自己比，这个工作要求每个样本和<strong>聚类中心</strong>对比，$c\in \R^{D\times K}$</p>
-<ol>
+<h2 id="swavunsupervised-learning-of-visual-features-by-contrasting-clustering-assignment">SwAV(Unsupervised Learning of Visual Features by Contrasting Clustering Assignment)</h2>
+<h3 id="motivation">motivation</h3>
+<p>同一场景下对应不同view，给定一个view下的特征，能否推断另一view下的特征。</p>
+<h3 id="compared-with-contrastive-learning">compared with Contrastive Learning</h3>
+<figure>
+<img src="https://s2.loli.net/2023/02/14/H4xqmeBMDCNdSWQ.png" alt="image-20230214115041760" /><figcaption aria-hidden="true">image-20230214115041760</figcaption>
+</figure>
+<p>instance classification这个任务要求自己和自己比，这个工作要求每个样本和<strong>聚类中心</strong>对比，<span class="math inline">\(c\in \R^{D\times K}\)</span></p>
+<ol type="1">
 <li>K c dimension of center embedding</li>
 <li>D number of centers</li>
 </ol>
-<p>生成同一样本两种数据增强的提取的特征<br>$$<br>x\to z_1,z_2<br>$$<br>基于center生成两个目标哦<br>$$<br>c\times z_1\to Q_1,c\times z_2\to Q_2<br>$$<br>如果$z_1,z_2$相似，可以借助$z_1$和c预测$Q_2$</p>
-<p>$Q$在某种程度上是latent embedding z的预测结果的ground truth，通过swap prediction进行训练</p>
-<h3 id="Advantage"><a href="#Advantage" class="headerlink" title="Advantage"></a>Advantage</h3><ol>
+<p>生成同一样本两种数据增强的提取的特征 <span class="math display">\[
+x\to z_1,z_2
+\]</span> 基于center生成两个目标哦 <span class="math display">\[
+c\times z_1\to Q_1,c\times z_2\to Q_2
+\]</span> 如果<span class="math inline">\(z_1,z_2\)</span>相似，可以借助<span class="math inline">\(z_1\)</span>和c预测<span class="math inline">\(Q_2\)</span></p>
+<p><span class="math inline">\(Q\)</span>在某种程度上是latent embedding z的预测结果的ground truth，通过swap prediction进行训练</p>
+<h3 id="advantage">Advantage</h3>
+<ol type="1">
 <li>减少负样本的依赖</li>
 <li>聚类中心具有特定语义含义(代表某一类数据)，传统Contrastive Learning中不能区分不同负样本和正样本的相似程度(类别不均衡)</li>
 </ol>
-<h3 id="Multi-Crop"><a href="#Multi-Crop" class="headerlink" title="Multi-Crop"></a>Multi-Crop</h3><p>生成来自一个图片的两个正样本，往往正样本之间有重叠，希望同时使用多个正样本同时不增加计算成本</p>
-<ol>
+<h3 id="multi-crop">Multi-Crop</h3>
+<p>生成来自一个图片的两个正样本，往往正样本之间有重叠，希望同时使用多个正样本同时不增加计算成本</p>
+<ol type="1">
 <li>选择两个较大的crop学习全局特征</li>
 <li>选择若干较小crop学习局部特征</li>
 </ol>
 <blockquote>
 <p>Multi-view</p>
 </blockquote>
-<h3 id="Refer"><a href="#Refer" class="headerlink" title="Refer"></a>Refer</h3><p>Deep clustering</p>
+<h3 id="refer">Refer</h3>
+<p>Deep clustering</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2023/02/14/ContrastiveLearningOverview2/" data-id="cle41bd960000yk8wcgypc5t3" data-title="ContrastiveLearningOverview2" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2023/02/14/ContrastiveLearningOverview2/" data-id="cle4atjdh0001dw8w5yh0b4cq" data-title="ContrastiveLearningOverview2" class="article-share-link">Share</a>
       
       
       
@@ -198,31 +226,15 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h1 id="Use-of-Hexo"><a href="#Use-of-Hexo" class="headerlink" title="Use of Hexo"></a>Use of Hexo</h1><p>Thanks to Chatgpt which points out the right way to use Hexo to establish a local site and pub it to github service. Here are the record to publish a new article into github </p>
-<h2 id="make-a-new-article"><a href="#make-a-new-article" class="headerlink" title="make a new article"></a>make a new article</h2><ol>
-<li>enter hexo site dir</li>
-<li>create a new article <code>hexo new articletitle</code> articletitle is the title of your article. Then you will find a new markdown file named <code>articletitle.md</code> in the <code>source/_post</code> dir</li>
-<li>edit the markdown file and add tags to it</li>
-</ol>
-<h2 id="post-local-dir-to-github-page-service"><a href="#post-local-dir-to-github-page-service" class="headerlink" title="post local dir to github page service"></a>post local dir to github page service</h2><p>When you encounter a newly created hexo repo(without relationship with any github pages)</p>
-<ol>
-<li>create repo in remote github service</li>
-<li>config the _config.yml file deploy sector.<ol>
-<li>type:git</li>
-<li>repo:Your github.io repo</li>
-<li>branch:master</li>
-</ol>
-</li>
-<li>install git deploy extension with <code>npm install hexo-deployer-git --save</code>(This may fail because of file lock,for example you have opened the github repo locally in a text editor)</li>
-<li>generate static pages with <code>hexo generate</code></li>
-<li>deploy into pages <code>hexo deploy</code></li>
-<li>you will see your pages later</li>
-</ol>
+        <h1 id="use-of-hexo">Use of Hexo</h1>
+<p>Thanks to Chatgpt which points out the right way to use Hexo to establish a local site and pub it to github service. Here are the record to publish a new article into github ## make a new article 1. enter hexo site dir 2. create a new article <code>hexo new articletitle</code> articletitle is the title of your article. Then you will find a new markdown file named <code>articletitle.md</code> in the <code>source/_post</code> dir 3. edit the markdown file and add tags to it</p>
+<h2 id="post-local-dir-to-github-page-service">post local dir to github page service</h2>
+<p>When you encounter a newly created hexo repo(without relationship with any github pages) 1. create repo in remote github service 2. config the _config.yml file deploy sector. 1. type:git 2. repo:Your github.io repo 3. branch:master 3. install git deploy extension with <code>npm install hexo-deployer-git --save</code>(This may fail because of file lock,for example you have opened the github repo locally in a text editor) 4. generate static pages with <code>hexo generate</code> 5. deploy into pages <code>hexo deploy</code> 6. you will see your pages later</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2023/02/13/firstpost/" data-id="cle41bd9a0001yk8wes3oha0k" data-title="How to post a new article and establish local site with hexo" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2023/02/13/firstpost/" data-id="cle4atjdi0002dw8w5s62bno6" data-title="How to post a new article and establish local site with hexo" class="article-share-link">Share</a>
       
       
       
@@ -259,23 +271,24 @@
     <div class="e-content article-entry" itemprop="articleBody">
       
         <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
+<h2 id="quick-start">Quick Start</h2>
+<h3 id="create-a-new-post">Create a new post</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
 <p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
+<h3 id="run-server">Run server</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
 <p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
+<h3 id="generate-static-files">Generate static files</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
 <p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
+<h3 id="deploy-to-remote-sites">Deploy to remote sites</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
 <p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2023/02/13/hello-world/" data-id="cle41bd9c0003yk8w1xo67j65" data-title="Hello World" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2023/02/13/hello-world/" data-id="cle4atjdc0000dw8w3ka24rat" data-title="Hello World" class="article-share-link">Share</a>
       
       
       
@@ -356,7 +369,7 @@
   <div class="outer">
     <div id="footer-info" class="inner">
       
-      &copy; 2023 John Doe<br>
+      &copy; 2023 Haihan Gao<br>
       Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
