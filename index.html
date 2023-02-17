@@ -75,6 +75,229 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-Dirichletprocess1" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/02/17/Dirichletprocess1/" class="article-date">
+  <time class="dt-published" datetime="2023-02-17T11:33:08.000Z" itemprop="datePublished">2023-02-17</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2023/02/17/Dirichletprocess1/">Dirichletprocess1</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="dirichlet-process">Dirichlet Process</h1>
+<h2 id="motivation">Motivation</h2>
+<p>给定若干采样自GMM二维数据，希望聚类为若干类(求解GMM中的k) <span class="math display">\[
+\log P(x) = \log \sum_{i=1}^k \alpha_i N(x|\mu_i,\sum_i)
+\]</span></p>
+<blockquote>
+<p>每个instance属于一类最好，但是这个结果没有意义</p>
+</blockquote>
+<p>每个数据<span class="math inline">\(x_i\)</span>来自分布<span class="math inline">\(p(\theta_i),\theta_i\)</span>为分布的参数，并且 <span class="math display">\[
+\theta_i |H(\theta)
+\]</span></p>
+<blockquote>
+<p>参数的分布来自另一个分布，若<span class="math inline">\(H\)</span>是连续分布，则 <span class="math display">\[
+H(\theta_1=\theta_2) = 0
+\]</span> 因此得到N个分布，这也是不符合预期的，假设 <span class="math display">\[
+\theta_i|G
+\]</span> G是一个离散分布，并且 <span class="math display">\[
+G|DP(\alpha,H),\alpha &gt;0
+\]</span> 满足初始分布为H，参数为<span class="math inline">\(\alpha\)</span>的Dirichlet Process</p>
+<ol type="1">
+<li><span class="math inline">\(\alpha\)</span>控制分布的离散程度，<span class="math inline">\(\alpha\)</span>越大则G不那么离散，极端期望下<span class="math inline">\(\alpha = 0\)</span> G变成单点分布</li>
+<li>H被称为Base measure</li>
+</ol>
+</blockquote>
+<h2 id="construction-of-dirichlet-process">Construction of Dirichlet Process</h2>
+<p>存在分布<span class="math inline">\(x|p(x)\to H(\theta)\)</span></p>
+<h3 id="stick-breaking">Stick Breaking</h3>
+<p>通过Stick Break采样一系列分布<span class="math inline">\(G_1,G_2,\cdots\)</span>，对应离散数据上的离散分布，随机分布(测度)可以看成在多个点(atom)上的权重</p>
+<p>采样自H得到<span class="math inline">\(\theta_1\)</span>(atom)，对应的权重<span class="math inline">\(\pi_1\)</span>由如下方式生成</p>
+<ol type="1">
+<li>采样自<span class="math inline">\(\Beta\)</span>分布得到<span class="math inline">\(\beta_1|\Beta(1,\alpha)\)</span></li>
+<li><span class="math inline">\(\pi_1 =\beta_1\)</span></li>
+</ol>
+<blockquote>
+<p><span class="math display">\[
+E[\beta ]= \frac{1}{1+\alpha}
+\]</span></p>
+</blockquote>
+<p>采样第二个atom <span class="math inline">\(\theta_2|H\)</span>，确定它的权重<span class="math inline">\(\pi_2\)</span></p>
+<ol type="1">
+<li><span class="math inline">\(\beta_2|\Beta(1,\alpha)\)</span></li>
+<li><span class="math inline">\(\pi_2 = (1-\pi_1)\beta_2\)</span></li>
+</ol>
+<p>得到一系列样本和权重 <span class="math display">\[
+\theta_1,\theta_2,\theta_3,\cdots\\
+\pi_1,\pi_2,\pi_3,\cdots
+\]</span> 对应分布G取值和概率，显然G是离散分布(无论H是否为离散分布)</p>
+<ol type="1">
+<li><span class="math inline">\(\alpha = 0,\beta=1\)</span>，第一次采样将所有权重给第一个样本，随后样本权重为0，生成单点分布</li>
+<li><span class="math inline">\(\alpha = \infty,\beta\to 0\)</span>，每次采样生成的<span class="math inline">\(\beta \to 0,\pi\to 0\)</span>，权重都很小，分布退化为均匀分布</li>
+</ol>
+<h2 id="dirichlet-dsitribution">Dirichlet Dsitribution</h2>
+<h3 id="beta分布">Beta分布</h3>
+<p>Beya分布来自于顺序统计量，考虑从[0,1]均匀分布中采样N个数，第k大的数应该满足分布 <span class="math display">\[
+f(x) =\frac{n!}{(k-1)!(n-k)!} x^{k-1} (1-x)^{n-k}=\frac{\Gamma(n+1)}{\Gamma(k)\Gamma(n-k+1)} x^{k-1} (1-x)^{n-k}
+\]</span></p>
+<blockquote>
+<p>可以看成某种程度上的二项分布，落在左侧有k-1个数，右侧是n-k个数</p>
+</blockquote>
+<p><code>Gamma</code>函数将阶乘推广到实数域，令<span class="math inline">\(\alpha = k,\beta = n-k+1\)</span>，得到 <span class="math display">\[
+f(x) = \frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)}x^{\alpha-1} (1-x)^{\beta -1} = \frac{1}{\Beta(\alpha ,\beta)}x^{\alpha-1}(1-x)^{\beta -1} \\
+\Gamma(Z) =\int_0^{\infty} t^{z-1} e^{-t} d t,\Gamma(n+1) = n!\\
+\Beta(x,y) =\int_0^1 t^{x-1}(1-t)^{y-1} dt =\frac{\Gamma(x)\Gamma(y)}{\Gamma(x+y)}
+\]</span></p>
+<h3 id="从贝叶斯推断角度理解beta分布">从贝叶斯推断角度理解Beta分布</h3>
+<p>Beta分布包含两个参数<span class="math inline">\(\Beta(\alpha,\beta)\)</span>，密度函数写成 <span class="math display">\[
+f(x) =\frac{1}{\Beta(\alpha,\beta)}x^{\alpha-1}(1-x)^{\beta -1}
+\]</span></p>
+<ol type="1">
+<li><span class="math inline">\(\alpha = \beta =1\)</span>，退化为均匀分布</li>
+<li><span class="math inline">\(\alpha = \beta = k\neq 1\)</span>，为中心在<span class="math inline">\(\frac{1}{2}\)</span>的均匀分布</li>
+</ol>
+<p>抛硬币为例，假设抛了三次硬币都是正面，能否判断硬币的两面都是正面？贝叶斯分布用于刻画先验分布，即没有任何实验的前提下，事件：硬币两面都是正面的概率满足的分布</p>
+<p>两点理由使用beta分布做先验分布</p>
+<ol type="1">
+<li><span class="math inline">\(\Beta\)</span>分布调整参数可以有效刻画多种不同分布</li>
+<li><span class="math inline">\(\Beta\)</span>分布在二项实验结果产生后仍然为<span class="math inline">\(\Beta\)</span>分布</li>
+</ol>
+<p>假设初始假设硬币是均匀的，即<span class="math inline">\(\Beta(1,1)\)</span>，二项分布下<span class="math inline">\(X|p\)</span>满足二项分布(p是一次实验成功的概率) <span class="math display">\[
+X|p \ bin(n,p)
+\]</span> 后验分布<span class="math inline">\(f(p|X=k)\)</span>写成 <span class="math display">\[
+f(p|X=k) =\frac{P(X=k|p)f(p)}{P(X=k)}
+\]</span> 记作<span class="math inline">\(f(p|X=k)\)</span>正比于<span class="math inline">\(P(X=k|p)f(p)\)</span>，带入得到 <span class="math display">\[
+\begin{aligned}
+f(p|X=k) &amp;= P(X=k|p)\frac{1}{\Beta(\alpha,\beta)}p^{\alpha-1}(1-p)^{\beta-1}\\
+&amp;=C_{n}^k p^{k+\alpha-1} (1-p)^{n-k+\beta-1} \frac{1}{\Beta(\alpha,\beta)}\
+\end{aligned}
+\]</span> 显然变成了<span class="math inline">\(\beta(k+\alpha,n-k+\beta)\)</span>分布</p>
+<h3 id="beta-binomial共轭">Beta-Binomial共轭</h3>
+<p>在n个数第k个数顺序统计量的前提下，增加一个限制。从<code>Uni(0,1)</code>中再采样m个数 <span class="math display">\[
+Y_1,Y_2,\cdots,Y_m |Uni(0,1)
+\]</span> 知道<span class="math inline">\(Y_i\)</span>中有<span class="math inline">\(m_1\)</span>个数比顺序统计量k<span class="math inline">\(x_{(k)}\)</span>大，<span class="math inline">\(m_2\)</span>个小，求 <span class="math display">\[
+P(x_{(k)}|Y_1,Y_2,\cdots,Y_m)
+\]</span> 分布</p>
+<p>知道<span class="math inline">\(x_{(k)}\)</span>先验分布是<span class="math inline">\(\Beta\)</span>分布 <span class="math display">\[
+f(x_{(k)}=x)|\Beta (k,n-k+1,x)
+\]</span> <span class="math inline">\(Y_i\)</span>相当于做了m次伯努利实验，符合二项分布<span class="math inline">\(m_1|B(m,p)\)</span> <span class="math display">\[
+P(m_1|x_{(k)}=x) =B(m,p)
+\]</span> 后验分布写成 <span class="math display">\[
+P(x_{(k)}= x|m_1) = \frac{P(m_1|x_{(k)}=x)P(x_{(k)}=x ) }{P(m_1)}
+\]</span></p>
+<blockquote>
+<ol type="1">
+<li>知识：随机采样m个数，包含<span class="math inline">\(m_1\)</span>个数比X小，其余数比X大</li>
+<li>先验：X采样自[0,1]上的分布<span class="math inline">\(f(x)\)</span></li>
+</ol>
+<p>知识表示为 <span class="math display">\[
+P(m=m_1|x) = \frac{m!}{m_1!m_2!} x^{m_1}(1-x)^{m_2}  \\
+\begin{aligned}
+P(m=m_1)&amp; = \int_0^1 P(m=m_1|x) f(x) dx \\
+&amp;=\int_0^1 \frac{m+1}{\Beta(m_1+1,m_2+1)} x^{m_1+k-1} (1-x)^{m_2+n-k} \frac{1}{\Beta(k,n-k+1)}\\
+&amp;=(m+1) \frac{1}{\Beta(m_1+1,m_2+1)\Beta(k,n-k+1)}\Beta(m_1+k,m_2+n-k+1)
+\end{aligned}
+\]</span> 后验分布计算为 <span class="math display">\[
+\begin{aligned}
+f(x|m_1) &amp;= \frac{p(m_1|x)p(x)}{p(m_1)}\\
+\end{aligned}
+f(x|m_1)|\Beta(x|k+m_1,n-k+1+m_2)
+\]</span></p>
+</blockquote>
+<h3 id="dirichlet-multinomial共轭">Dirichlet-Multinomial共轭</h3>
+<p>考虑排序后的顺序统计量 <span class="math display">\[
+X_1,X_2,\cdots,X_n
+\]</span> 求 <span class="math display">\[
+X_{k_1},X_{k_1+k_2}
+\]</span> 的联合分布</p>
+<p>从另一个角度考虑这个问题，<span class="math inline">\(X_{k_1},X_{k_1+k_2}\)</span>将区间分成三个部分</p>
+<ol type="1">
+<li><span class="math inline">\([0,x_1)\)</span>包含<span class="math inline">\(k_1-1\)</span>个元素</li>
+<li><span class="math inline">\((x_1,x_1+x_2)\)</span>包含<span class="math inline">\(k_2-1\)</span>个元素</li>
+<li><span class="math inline">\((x_1+x_2,1]\)</span>包含<span class="math inline">\(N - k_1 -k_2\)</span>个元素</li>
+</ol>
+<blockquote>
+<p>这显然是一个多项式分布：假设做一次随机试验A存在三种结果，概率分别为 <span class="math display">\[
+P(A_1) = p_1\\
+P(A_2) = p_2\\
+P(A_3) = p_3,p_1+p_2+p_3=1
+\]</span> 做N次A实验，求 <span class="math display">\[
+P(A_1 = k_1,A_2=k_2,A_3 = k_3),k_1+k_2+k_3 = N
+\]</span> 概率 <span class="math display">\[
+P(A_1= k_1,A_2 = k_2,A_3 = k_3) =C_{N}^{k_1,k_2,k_3} p_1^{k_1} p_2^{k_2}p_3^{k_3}
+\]</span> 可以理解为 <span class="math display">\[
+\begin{aligned}
+P(A_1=k_1,A_2=k_2,A_3=k_3) &amp;= P(A_1=k_1,A_2=k_2|A_3=k_3)P(A_3=k_3)\\
+&amp;=C_{N-k_3}^{k_1}  (\frac{p_1}{p_1+p_2})^{k_1}(\frac{p_2}{p_1+p_2})^{k_2} C_{N}^{k_3} p_3^{k_3} (p_1+p_2)^{k_1+k_2}\\
+=\frac{N!}{k_3!k_1!k_2!} p_1^{k_1} p_2^{k_2} p_3^{k_3}
+\end{aligned}
+\]</span> 记作<span class="math inline">\(Multi(N,p_1,p_2,p_3)\)</span>，意味着做N次实验，每个事件发生的概率分别为<span class="math inline">\(p_1,p_2,p_3\)</span></p>
+</blockquote>
+<p>求解(先选择2个元素放在<span class="math inline">\(x_1,x_2\)</span>，随后变成<span class="math inline">\(Multi(N-2,x_1,x_2,x_3=(1-x_1-x_2))\)</span>) <span class="math display">\[
+\begin{aligned}
+f(x_1,x_2,x_3) &amp;= A_n^2 Multi(n-2,x_1,x_2,x_3)\\
+&amp;= n(n-1)\frac{(n-2)!}{(k_1-1)!(k_2-1)!(n-k_1-k_2)!} x_1^{k_1-1}x_2^{k_2-1}x_3^{n-k_1-k_2}\\
+&amp;= \frac{\Gamma(n+1)}{\Gamma(k_1)\Gamma(k_2)\Gamma(n-k_1-k_2+1)}
+\end{aligned}
+\]</span> 记作Dirichlet分布，同理可以讨论<span class="math inline">\(x_{k_1},x_{k_1+k_2},x_{k_1+k_2+k_3},\cdots\)</span>的联合分布，Dirichlet分布<span class="math inline">\(Dir(k_1,K_2,k_3)\)</span>写成 <span class="math display">\[
+f(x_1,x_2,x_3) = \frac{\Gamma (\alpha_1+\alpha_2+\alpha_3)}{\Gamma (\alpha_1)\Gamma(\alpha_2)\Gamma(\alpha_3)}x_1^{\alpha_1-1}x_2^{\alpha_2-1}x_3^{\alpha_3-1}\\
+\alpha_1 = k_1,\alpha_2=k_2,\alpha_3 = n-k_1-k_2+1,x_1+x_2+x_3=1
+\]</span></p>
+<h3 id="数学期望和方差">数学期望和方差</h3>
+<blockquote>
+<p>数学期望可以从如下角度考虑，对于<span class="math inline">\(x_1\)</span>的期望，实际上是顺序统计量<span class="math inline">\(x_{k_1}\)</span>的期望，计算 <span class="math display">\[
+f(x_{k_1} = x) = C_{n}^{k_1}  x^{k_1}(1-x)^{n-k_1}\\
+\begin{aligned}
+E[x_1] &amp;= \frac{n!}{(n-k_1)!k_1!}\int_0^1 x^{k_1+1}(1-x)^{n-k_1} dx\\
+&amp;=\frac{\Gamma(n+1)}{\Gamma(n-k_1+1)\Gamma(k_1+1)}\Beta(k_1+2,n-k_1+1)\\
+&amp;=\frac{\Gamma(n+1)\Gamma(k_1+2)}{\Gamma(k_1+1)\Gamma(n+3)}\\
+&amp;=\frac{k_1+1}{(n+2)(n+1)},n=\alpha_1+\alpha_2+\alpha_3-1
+\end{aligned}
+\]</span></p>
+</blockquote>
+<h2 id="characteristic-of-dirichlet-process">Characteristic of Dirichlet Process</h2>
+<p>牢记：随机过程采样得到随机分布</p>
+<p>Dirichlet Process任何时刻得到的分布G是离散分布，在离散点<span class="math inline">\(a_1,a_2,\cdots,a_d\)</span>上联合分布满足 <span class="math display">\[
+(G(a_1),G(a_2),\cdots,G(a_d))|Dir(\alpha H(a_1),\alpha H(a_2),\cdots,\alpha H(a_d))
+\]</span></p>
+<blockquote>
+<p><span class="math display">\[
+x_1,x_2,\cdots,x_n|Dir(\alpha_1,\alpha_2,\cdots,\alpha_d)\\
+E[x_i] = \frac{\alpha_i}{\sum_j \alpha_j}\\
+Var[x_i]=\frac{\alpha_i(\sum_k \alpha_k - \alpha_i)}{(\sum_k \alpha_i)^2(\sum_k \alpha _k +1)}
+\]</span></p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/02/17/Dirichletprocess1/" data-id="cle8ge6qe0000jk8w2wus012i" data-title="Dirichletprocess1" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Random-Process-Dirichlet-Process/" rel="tag">Random Process, Dirichlet Process</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-ContrastiveLearningOverview3" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2023/02/17/ContrastiveLearningOverview3/" class="article-date">
@@ -530,7 +753,7 @@ $$<br>
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Contrastive-Learning-Deep-Learning-Unsupervised-Learning/" rel="tag">Contrastive Learning, Deep Learning, Unsupervised Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Use-of-Hexo/" rel="tag">Use of Hexo</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Contrastive-Learning-Deep-Learning-Unsupervised-Learning/" rel="tag">Contrastive Learning, Deep Learning, Unsupervised Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Random-Process-Dirichlet-Process/" rel="tag">Random Process, Dirichlet Process</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Use-of-Hexo/" rel="tag">Use of Hexo</a></li></ul>
     </div>
   </div>
 
@@ -540,7 +763,7 @@ $$<br>
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Contrastive-Learning-Deep-Learning-Unsupervised-Learning/" style="font-size: 20px;">Contrastive Learning, Deep Learning, Unsupervised Learning</a> <a href="/tags/Use-of-Hexo/" style="font-size: 10px;">Use of Hexo</a>
+      <a href="/tags/Contrastive-Learning-Deep-Learning-Unsupervised-Learning/" style="font-size: 20px;">Contrastive Learning, Deep Learning, Unsupervised Learning</a> <a href="/tags/Random-Process-Dirichlet-Process/" style="font-size: 10px;">Random Process, Dirichlet Process</a> <a href="/tags/Use-of-Hexo/" style="font-size: 10px;">Use of Hexo</a>
     </div>
   </div>
 
@@ -562,6 +785,10 @@ $$<br>
       <ul>
         
           <li>
+            <a href="/2023/02/17/Dirichletprocess1/">Dirichletprocess1</a>
+          </li>
+        
+          <li>
             <a href="/2023/02/17/ContrastiveLearningOverview3/">ContrastiveLearningOverview3</a>
           </li>
         
@@ -575,10 +802,6 @@ $$<br>
         
           <li>
             <a href="/2023/02/13/firstpost/">How to post a new article and establish local site with hexo</a>
-          </li>
-        
-          <li>
-            <a href="/2023/02/13/hello-world/">Hello World</a>
           </li>
         
       </ul>
