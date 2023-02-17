@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>ContrastiveLearningOverview3 | Gaoustcer blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Contrastive Learning Introduction(III，不用负样本的对比学习)BYOL(Bootstrap Your Own Latent A New Approach to Self-Supervised Learning)通过自举(仅仅在正样本之间对比学习)学习好的特征表示，同时避免模型退化  同样的instance通过两个数据增强得到$v$和$v^\prime$，通过两个">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ContrastiveLearningOverview3">
+<meta property="og:url" content="http://example.com/2023/02/17/ContrastiveLearningOverview3/index.html">
+<meta property="og:site_name" content="Gaoustcer blog">
+<meta property="og:description" content="Contrastive Learning Introduction(III，不用负样本的对比学习)BYOL(Bootstrap Your Own Latent A New Approach to Self-Supervised Learning)通过自举(仅仅在正样本之间对比学习)学习好的特征表示，同时避免模型退化  同样的instance通过两个数据增强得到$v$和$v^\prime$，通过两个">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://s2.loli.net/2023/02/16/mJBUMe4r8oCGj9A.png">
+<meta property="og:image" content="https://s2.loli.net/2023/02/16/lJQzLWFV9gHeid6.png">
+<meta property="og:image" content="https://s2.loli.net/2023/02/16/jK8zE5PvwMO4XHt.png">
+<meta property="og:image" content="https://s2.loli.net/2023/02/16/KUqm7XgtpcTxOu8.png">
+<meta property="article:published_time" content="2023-02-17T11:28:13.000Z">
+<meta property="article:modified_time" content="2023-02-17T11:30:57.783Z">
+<meta property="article:author" content="Haihan Gao">
+<meta property="article:tag" content="Contrastive Learning, Deep Learning, Unsupervised Learning">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/02/16/mJBUMe4r8oCGj9A.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Gaoustcer blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Gaoustcer blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-ContrastiveLearningOverview3" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/02/17/ContrastiveLearningOverview3/" class="article-date">
+  <time class="dt-published" datetime="2023-02-17T11:28:13.000Z" itemprop="datePublished">2023-02-17</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      ContrastiveLearningOverview3
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Contrastive-Learning-Introduction-III，不用负样本的对比学习"><a href="#Contrastive-Learning-Introduction-III，不用负样本的对比学习" class="headerlink" title="Contrastive Learning Introduction(III，不用负样本的对比学习)"></a>Contrastive Learning Introduction(III，不用负样本的对比学习)</h1><h2 id="BYOL-Bootstrap-Your-Own-Latent-A-New-Approach-to-Self-Supervised-Learning"><a href="#BYOL-Bootstrap-Your-Own-Latent-A-New-Approach-to-Self-Supervised-Learning" class="headerlink" title="BYOL(Bootstrap Your Own Latent A New Approach to Self-Supervised Learning)"></a>BYOL(Bootstrap Your Own Latent A New Approach to Self-Supervised Learning)</h2><p>通过自举(仅仅在正样本之间对比学习)学习好的特征表示，同时避免模型退化</p>
+<p><img src="https://s2.loli.net/2023/02/16/mJBUMe4r8oCGj9A.png" alt="image-20230216175143509"></p>
+<p>同样的instance通过两个数据增强得到$v$和$v^\prime$，通过两个编码器$f<em>\theta,f</em>\xi$和两个projection head $g<em>\theta,g</em>\xi$得到representation。使用动量更新$f<em>\xi,g</em>\xi$</p>
+<h3 id="Predictor"><a href="#Predictor" class="headerlink" title="Predictor"></a>Predictor</h3><p>增加一个Prediction Network $q<em>\theta$(MLP)，使得预测结果和$z</em>\xi^\prime$尽量接近，输出的$y_\theta$用于下游任务</p>
+<h3 id="Loss"><a href="#Loss" class="headerlink" title="Loss"></a>Loss</h3><script type="math/tex; mode=display">
+\parallel q_\theta(z_\theta) - z^\prime_\xi\parallel_2^2</script><h3 id="问什么不会出现模型坍塌"><a href="#问什么不会出现模型坍塌" class="headerlink" title="问什么不会出现模型坍塌"></a>问什么不会出现模型坍塌</h3><p>projector/prediction包含两个Batch Normal</p>
+<script type="math/tex; mode=display">
+Linear \to BN \to ReLU\to BN\tag{MLP}\label{MLP}</script><p>Batch Normal会泄露样本中其它数据的特征(和平均数据的差别)，本质上是隐式的对比试验</p>
+<h2 id="SimSiam-Exploring-Simple-Siamese-Representation-Learning"><a href="#SimSiam-Exploring-Simple-Siamese-Representation-Learning" class="headerlink" title="SimSiam(Exploring Simple Siamese Representation Learning)"></a>SimSiam(Exploring Simple Siamese Representation Learning)</h2><ol>
+<li>无需正样本</li>
+<li>无需batch size</li>
+<li>无需动量编码器</li>
+</ol>
+<p><img src="https://s2.loli.net/2023/02/16/lJQzLWFV9gHeid6.png" alt="image-20230216180732377"></p>
+<p>共享参数的两个编码器(没有动量更新，完全copy参数)，predictor同时作用于$x_1,x_2$，随后互相预测，计算<code>mse loss</code></p>
+<script type="math/tex; mode=display">
+x_1 \to p_1\to h_1,x_2\to p_2\to h_2\\
+\mathcal{L} = D(p_1,h_2)+D(p_2,h_1)</script><h3 id="几个工作的对比"><a href="#几个工作的对比" class="headerlink" title="几个工作的对比"></a>几个工作的对比</h3><p><img src="https://s2.loli.net/2023/02/16/jK8zE5PvwMO4XHt.png" alt="image-20230216181120466"></p>
+<ol>
+<li><code>SimCLR</code>和<code>SwAV</code>计算正负样本embedding，优化<code>infonce loss</code>，区别是前者需要迭代两个编码器，后者只需要更新一个</li>
+<li><code>BYOL</code>和<code>SimSiam</code>无需计算<code>infonce loss</code>，转化为预测问题，前者采用动量更新保持参数一致性，后者直接采用同一个网络+stop gradient</li>
+</ol>
+<h2 id="结合Transformer和对比学习"><a href="#结合Transformer和对比学习" class="headerlink" title="结合Transformer和对比学习"></a>结合Transformer和对比学习</h2><h3 id="Moco-v3"><a href="#Moco-v3" class="headerlink" title="Moco-v3"></a>Moco-v3</h3><p>解决自监督Transformer训练不稳定的问题，Backbone换成visual transformer，这种情况下大batch_size performance反而不好</p>
+<blockquote>
+<p>随机初始化patch transformer(tokenization，图片序列化)</p>
+</blockquote>
+<p>结合<code>infonce loss</code>和<code>predictive loss</code></p>
+<h3 id="Dino-Self-distillation-with-no-labels"><a href="#Dino-Self-distillation-with-no-labels" class="headerlink" title="Dino(Self-distillation with no labels)"></a>Dino(Self-distillation with no labels)</h3><p><img src="https://s2.loli.net/2023/02/16/KUqm7XgtpcTxOu8.png" alt="image-20230216200246056"></p>
+<p>添加centering避免模型坍塌</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/02/17/ContrastiveLearningOverview3/" data-id="cle8gag9x0002f88w5uvq7tf1" data-title="ContrastiveLearningOverview3" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Contrastive-Learning-Deep-Learning-Unsupervised-Learning/" rel="tag">Contrastive Learning, Deep Learning, Unsupervised Learning</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2023/02/17/ContrastiveLearningOverview1/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">ContrastiveLearningOverview1</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Contrastive-Learning-Deep-Learning-Unsupervised-Learning/" rel="tag">Contrastive Learning, Deep Learning, Unsupervised Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Use-of-Hexo/" rel="tag">Use of Hexo</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Contrastive-Learning-Deep-Learning-Unsupervised-Learning/" style="font-size: 20px;">Contrastive Learning, Deep Learning, Unsupervised Learning</a> <a href="/tags/Use-of-Hexo/" style="font-size: 10px;">Use of Hexo</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/02/">February 2023</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/02/17/ContrastiveLearningOverview3/">ContrastiveLearningOverview3</a>
+          </li>
+        
+          <li>
+            <a href="/2023/02/17/ContrastiveLearningOverview1/">ContrastiveLearningOverview1</a>
+          </li>
+        
+          <li>
+            <a href="/2023/02/14/ContrastiveLearningOverview2/">ContrastiveLearningOverview2</a>
+          </li>
+        
+          <li>
+            <a href="/2023/02/13/firstpost/">How to post a new article and establish local site with hexo</a>
+          </li>
+        
+          <li>
+            <a href="/2023/02/13/hello-world/">Hello World</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Haihan Gao<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

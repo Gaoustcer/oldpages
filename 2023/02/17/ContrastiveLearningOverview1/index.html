@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>ContrastiveLearningOverview1 | Gaoustcer blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Paper Reading(Momentum Contrast for Unsupervised Visual Representation Learning)无监督学习预训练的结果逼近有监督学习，对比学习用来挖掘instance之间的相似程度 背景相当于给样本打上伪标签(相似&#x2F;不相似) Instance Discrimination给定一个数据集  x_1,x_2,\cdots,x_n对每个in">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ContrastiveLearningOverview1">
+<meta property="og:url" content="http://example.com/2023/02/17/ContrastiveLearningOverview1/index.html">
+<meta property="og:site_name" content="Gaoustcer blog">
+<meta property="og:description" content="Paper Reading(Momentum Contrast for Unsupervised Visual Representation Learning)无监督学习预训练的结果逼近有监督学习，对比学习用来挖掘instance之间的相似程度 背景相当于给样本打上伪标签(相似&#x2F;不相似) Instance Discrimination给定一个数据集  x_1,x_2,\cdots,x_n对每个in">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://s2.loli.net/2023/02/01/JMhfc15pO48Lb2i.png">
+<meta property="og:image" content="https://s2.loli.net/2023/02/01/hwu1PjkBW5EgATo.png">
+<meta property="article:published_time" content="2023-02-17T11:28:09.000Z">
+<meta property="article:modified_time" content="2023-02-17T11:30:23.223Z">
+<meta property="article:author" content="Haihan Gao">
+<meta property="article:tag" content="Contrastive Learning, Deep Learning, Unsupervised Learning">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/02/01/JMhfc15pO48Lb2i.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Gaoustcer blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Gaoustcer blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-ContrastiveLearningOverview1" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/02/17/ContrastiveLearningOverview1/" class="article-date">
+  <time class="dt-published" datetime="2023-02-17T11:28:09.000Z" itemprop="datePublished">2023-02-17</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      ContrastiveLearningOverview1
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Paper-Reading-Momentum-Contrast-for-Unsupervised-Visual-Representation-Learning"><a href="#Paper-Reading-Momentum-Contrast-for-Unsupervised-Visual-Representation-Learning" class="headerlink" title="Paper Reading(Momentum Contrast for Unsupervised Visual Representation Learning)"></a>Paper Reading(Momentum Contrast for Unsupervised Visual Representation Learning)</h1><p>无监督学习预训练的结果逼近有监督学习，对比学习用来挖掘instance之间的相似程度</p>
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>相当于给样本打上伪标签(相似/不相似)</p>
+<h3 id="Instance-Discrimination"><a href="#Instance-Discrimination" class="headerlink" title="Instance Discrimination"></a>Instance Discrimination</h3><p>给定一个数据集</p>
+<script type="math/tex; mode=display">
+x_1,x_2,\cdots,x_n</script><p>对每个instance用k种transformer生成k个增广instance</p>
+<script type="math/tex; mode=display">
+x_1^k ,x_1^2,\cdots,x_1^k</script><p>在$n\times (k+1)$大小的数据集中，instance和它的增广互为正样本(相似)，其余样本互为负样本</p>
+<blockquote>
+<p>每张图片自成一类</p>
+</blockquote>
+<p>学习特征，带入NCE loss</p>
+<h3 id="动量"><a href="#动量" class="headerlink" title="动量"></a>动量</h3><p>加权平均</p>
+<script type="math/tex; mode=display">
+y_t = my_{t-1}+(1-m)x_t</script><p>当前输入依赖于上一时刻状态</p>
+<h2 id="Abstract-amp-amp-Introduction"><a href="#Abstract-amp-amp-Introduction" class="headerlink" title="Abstract &amp;&amp; Introduction"></a>Abstract &amp;&amp; Introduction</h2><script type="math/tex; mode=display">
+对比学习\to 字典查询\\
+memory\ bank\to 队列</script><p>moving average encoder用于提取特征，采用动量更新的方法尽量和上一时刻状态保持一致</p>
+<blockquote>
+<p>Moco学习的特征可以简单地迁移到下游任务</p>
+</blockquote>
+<h3 id="Linear-Protocol"><a href="#Linear-Protocol" class="headerlink" title="Linear Protocol"></a>Linear Protocol</h3><p>测试特征提取网络的好坏，仅仅训练全连接网络作为分类器并在梯度更新时freeze特征提取网络</p>
+<h3 id="gap-between-supervised-and-unsupervised-Learning"><a href="#gap-between-supervised-and-unsupervised-Learning" class="headerlink" title="gap between supervised and unsupervised Learning"></a>gap between supervised and unsupervised Learning</h3><p>对比学习=构建动态字典</p>
+<p>对于$x_1$增广得到正样本对$x_1^1,x_1^2$，相对于数据集中其它样本$x_2,x_3,\cdots,x_n$是负样本</p>
+<script type="math/tex; mode=display">
+x_1^1\to^{E_1}\to f_1^1\\
+x_1^2 \to ^{E_2}\to f_1^2\\
+x_2,x_3,\cdots,x_n\to ^{E_2}\to f_n</script><p>两个特征提取器获取特征(也可以借助单一net)，字典查询指的是从一些key中找到和query相似的key，这里</p>
+<ol>
+<li>query：$f_1^1$正样本编码出的特征</li>
+<li>keys：$f_1^2,f_2,f_3,\cdots,f_n$，负样本编码出的特征，希望查找到$f_1^2$</li>
+</ol>
+<p>重新记作</p>
+<script type="math/tex; mode=display">
+x_q\to^{E_1}\to q\\
+x_k\to^{E_2}\to k_0,k_1,\cdots</script><p>希望</p>
+<ol>
+<li>字典尽量大</li>
+<li>编码器一致性，指的是多个key应该借助相似的编码器生成</li>
+</ol>
+<h3 id="为什么用队列代替字典？"><a href="#为什么用队列代替字典？" class="headerlink" title="为什么用队列代替字典？"></a>为什么用队列代替字典？</h3><p>队列可以很大，但是每次更新只更新一个mini-batch大小的特征</p>
+<blockquote>
+<p>这样会破坏队列中元素的一致性，具体而言队列头和队列尾部特征来自不同的编码器，头的特征来自<strong>旧编码器</strong>，尾部特征来自<strong>新编码器</strong></p>
+</blockquote>
+<p>momentum encoder解决不一致问题，它的更新满足</p>
+<script type="math/tex; mode=display">
+\theta_k = m \theta_{k-1}+(1-m)\theta_q</script><p>落后于正样本encoder参数</p>
+<blockquote>
+<p>能否将Mask Auto Encoding作为代理任务？</p>
+</blockquote>
+<h2 id="论文精读"><a href="#论文精读" class="headerlink" title="论文精读"></a>论文精读</h2><ol>
+<li>intro部分归纳无监督预训练在CV上表现不佳的原因在于离散/连续信号空间带来的差别，NLP上可以建立关于token的字典</li>
+<li>Dynamic Dictionary: key采样自data，通过encoder编码为embedding，问题转化为字典中query查找的过程</li>
+</ol>
+<p><img src="https://s2.loli.net/2023/02/01/JMhfc15pO48Lb2i.png" alt="image-20230201114411771"></p>
+<ol>
+<li>字典被视为一个队列，当前mini-batch encode结果入队，旧encoder生成的结果出队。动量更新保证队列中元素的一致性</li>
+<li>can be transferred to downstream tasks by fine-tuning</li>
+</ol>
+<h3 id="Method-Contrast-Learning-as-Dictionary-Look-up"><a href="#Method-Contrast-Learning-as-Dictionary-Look-up" class="headerlink" title="Method: Contrast Learning as Dictionary Look-up"></a>Method: Contrast Learning as Dictionary Look-up</h3><p>给定query q和一系列keys ${ k<em>0,k_1,\cdots,}$，其中包含唯一key $k</em>+$是查询的目标，Contrast Loss用于评估q和$k_+$相对于其它正负样本的相似程度，查询记作</p>
+<script type="math/tex; mode=display">
+q=f_q(x^q)</script><ol>
+<li>$f_q$ encoder network</li>
+<li>$x^q$ query sample</li>
+</ol>
+<h3 id="Contrast-Loss梯度回传的方式-Momentum-Contrast"><a href="#Contrast-Loss梯度回传的方式-Momentum-Contrast" class="headerlink" title="Contrast Loss梯度回传的方式 Momentum Contrast"></a>Contrast Loss梯度回传的方式 Momentum Contrast</h3><p><img src="https://s2.loli.net/2023/02/01/hwu1PjkBW5EgATo.png" alt="image-20230201152208102"></p>
+<ol>
+<li>end-to-end 通过contrastive loss同时更新key encoder和query encoder的参数，两个encoder不共享任何参数</li>
+<li>memory-bank 使用一个encoder，维护memory bank，存储所有正负样本的embedding tensor(从梯度图上detach)。contrastive loss回传每更新一次encoder就重新计算一次memory bank。每次从memory bank中采样若干negative samples</li>
+<li><code>Moco</code>有些类似强化学习中延迟更新的思想，key encoder采用动量更新</li>
+</ol>
+<h4 id="Use-queue-instead-of-memory-bank"><a href="#Use-queue-instead-of-memory-bank" class="headerlink" title="Use queue instead of memory bank"></a>Use queue instead of memory bank</h4><p>队列保证我们可以使用之前encoder的结果，希望key encoder改变不要太大因此使用动量更新的策略</p>
+<blockquote>
+<p>相比memory bank，避免了每次更新encoder都需要重新遍历data sample带来的开销</p>
+</blockquote>
+<h3 id="Pretext-Task构建正负样本对"><a href="#Pretext-Task构建正负样本对" class="headerlink" title="Pretext Task构建正负样本对"></a>Pretext Task构建正负样本对</h3><p>构建正样本对：同一张图片采取两种方式进行数据增强</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/02/17/ContrastiveLearningOverview1/" data-id="cle8gag9j0000f88w05aehydg" data-title="ContrastiveLearningOverview1" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Contrastive-Learning-Deep-Learning-Unsupervised-Learning/" rel="tag">Contrastive Learning, Deep Learning, Unsupervised Learning</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2023/02/17/ContrastiveLearningOverview3/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          ContrastiveLearningOverview3
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2023/02/14/ContrastiveLearningOverview2/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">ContrastiveLearningOverview2</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Contrastive-Learning-Deep-Learning-Unsupervised-Learning/" rel="tag">Contrastive Learning, Deep Learning, Unsupervised Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Use-of-Hexo/" rel="tag">Use of Hexo</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Contrastive-Learning-Deep-Learning-Unsupervised-Learning/" style="font-size: 20px;">Contrastive Learning, Deep Learning, Unsupervised Learning</a> <a href="/tags/Use-of-Hexo/" style="font-size: 10px;">Use of Hexo</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/02/">February 2023</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/02/17/ContrastiveLearningOverview3/">ContrastiveLearningOverview3</a>
+          </li>
+        
+          <li>
+            <a href="/2023/02/17/ContrastiveLearningOverview1/">ContrastiveLearningOverview1</a>
+          </li>
+        
+          <li>
+            <a href="/2023/02/14/ContrastiveLearningOverview2/">ContrastiveLearningOverview2</a>
+          </li>
+        
+          <li>
+            <a href="/2023/02/13/firstpost/">How to post a new article and establish local site with hexo</a>
+          </li>
+        
+          <li>
+            <a href="/2023/02/13/hello-world/">Hello World</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Haihan Gao<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>
