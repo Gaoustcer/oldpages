@@ -6,12 +6,12 @@
   
   <title>ContrastiveLearningOverview3 | Gaoustcer blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="Contrastive Learning Introduction(III，不用负样本的对比学习)BYOL(Bootstrap Your Own Latent A New Approach to Self-Supervised Learning)通过自举(仅仅在正样本之间对比学习)学习好的特征表示，同时避免模型退化  同样的instance通过两个数据增强得到$v$和$v^\prime$，通过两个">
+  <meta name="description" content="Contrastive Learning Introduction(III，不用负样本的对比学习) BYOL(Bootstrap Your Own Latent A New Approach to Self-Supervised Learning) 通过自举(仅仅在正样本之间对比学习)学习好的特征表示，同时避免模型退化  image-20230216175143509  同样的inst">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ContrastiveLearningOverview3">
 <meta property="og:url" content="http://example.com/2023/02/17/ContrastiveLearningOverview3/index.html">
 <meta property="og:site_name" content="Gaoustcer blog">
-<meta property="og:description" content="Contrastive Learning Introduction(III，不用负样本的对比学习)BYOL(Bootstrap Your Own Latent A New Approach to Self-Supervised Learning)通过自举(仅仅在正样本之间对比学习)学习好的特征表示，同时避免模型退化  同样的instance通过两个数据增强得到$v$和$v^\prime$，通过两个">
+<meta property="og:description" content="Contrastive Learning Introduction(III，不用负样本的对比学习) BYOL(Bootstrap Your Own Latent A New Approach to Self-Supervised Learning) 通过自举(仅仅在正样本之间对比学习)学习好的特征表示，同时避免模型退化  image-20230216175143509  同样的inst">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://s2.loli.net/2023/02/16/mJBUMe4r8oCGj9A.png">
 <meta property="og:image" content="https://s2.loli.net/2023/02/16/lJQzLWFV9gHeid6.png">
@@ -105,40 +105,61 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h1 id="Contrastive-Learning-Introduction-III，不用负样本的对比学习"><a href="#Contrastive-Learning-Introduction-III，不用负样本的对比学习" class="headerlink" title="Contrastive Learning Introduction(III，不用负样本的对比学习)"></a>Contrastive Learning Introduction(III，不用负样本的对比学习)</h1><h2 id="BYOL-Bootstrap-Your-Own-Latent-A-New-Approach-to-Self-Supervised-Learning"><a href="#BYOL-Bootstrap-Your-Own-Latent-A-New-Approach-to-Self-Supervised-Learning" class="headerlink" title="BYOL(Bootstrap Your Own Latent A New Approach to Self-Supervised Learning)"></a>BYOL(Bootstrap Your Own Latent A New Approach to Self-Supervised Learning)</h2><p>通过自举(仅仅在正样本之间对比学习)学习好的特征表示，同时避免模型退化</p>
-<p><img src="https://s2.loli.net/2023/02/16/mJBUMe4r8oCGj9A.png" alt="image-20230216175143509"></p>
-<p>同样的instance通过两个数据增强得到$v$和$v^\prime$，通过两个编码器$f<em>\theta,f</em>\xi$和两个projection head $g<em>\theta,g</em>\xi$得到representation。使用动量更新$f<em>\xi,g</em>\xi$</p>
-<h3 id="Predictor"><a href="#Predictor" class="headerlink" title="Predictor"></a>Predictor</h3><p>增加一个Prediction Network $q<em>\theta$(MLP)，使得预测结果和$z</em>\xi^\prime$尽量接近，输出的$y_\theta$用于下游任务</p>
-<h3 id="Loss"><a href="#Loss" class="headerlink" title="Loss"></a>Loss</h3><script type="math/tex; mode=display">
-\parallel q_\theta(z_\theta) - z^\prime_\xi\parallel_2^2</script><h3 id="问什么不会出现模型坍塌"><a href="#问什么不会出现模型坍塌" class="headerlink" title="问什么不会出现模型坍塌"></a>问什么不会出现模型坍塌</h3><p>projector/prediction包含两个Batch Normal</p>
-<script type="math/tex; mode=display">
-Linear \to BN \to ReLU\to BN\tag{MLP}\label{MLP}</script><p>Batch Normal会泄露样本中其它数据的特征(和平均数据的差别)，本质上是隐式的对比试验</p>
-<h2 id="SimSiam-Exploring-Simple-Siamese-Representation-Learning"><a href="#SimSiam-Exploring-Simple-Siamese-Representation-Learning" class="headerlink" title="SimSiam(Exploring Simple Siamese Representation Learning)"></a>SimSiam(Exploring Simple Siamese Representation Learning)</h2><ol>
+        <h1 id="contrastive-learning-introductioniii不用负样本的对比学习">Contrastive Learning Introduction(III，不用负样本的对比学习)</h1>
+<h2 id="byolbootstrap-your-own-latent-a-new-approach-to-self-supervised-learning">BYOL(Bootstrap Your Own Latent A New Approach to Self-Supervised Learning)</h2>
+<p>通过自举(仅仅在正样本之间对比学习)学习好的特征表示，同时避免模型退化</p>
+<figure>
+<img src="https://s2.loli.net/2023/02/16/mJBUMe4r8oCGj9A.png" alt="image-20230216175143509" /><figcaption aria-hidden="true">image-20230216175143509</figcaption>
+</figure>
+<p>同样的instance通过两个数据增强得到<span class="math inline">\(v\)</span>和<span class="math inline">\(v^\prime\)</span>，通过两个编码器<span class="math inline">\(f_\theta,f_\xi\)</span>和两个projection head <span class="math inline">\(g_\theta,g_\xi\)</span>得到representation。使用动量更新<span class="math inline">\(f_\xi,g_\xi\)</span></p>
+<h3 id="predictor">Predictor</h3>
+<p>增加一个Prediction Network <span class="math inline">\(q_\theta\)</span>(MLP)，使得预测结果和<span class="math inline">\(z_\xi^\prime\)</span>尽量接近，输出的<span class="math inline">\(y_\theta\)</span>用于下游任务</p>
+<h3 id="loss">Loss</h3>
+<p><span class="math display">\[
+\parallel q_\theta(z_\theta) - z^\prime_\xi\parallel_2^2
+\]</span></p>
+<h3 id="问什么不会出现模型坍塌">问什么不会出现模型坍塌</h3>
+<p>projector/prediction包含两个Batch Normal <span class="math display">\[
+Linear \to BN \to ReLU\to BN\tag{MLP}\label{MLP}
+\]</span> Batch Normal会泄露样本中其它数据的特征(和平均数据的差别)，本质上是隐式的对比试验</p>
+<h2 id="simsiamexploring-simple-siamese-representation-learning">SimSiam(Exploring Simple Siamese Representation Learning)</h2>
+<ol type="1">
 <li>无需正样本</li>
 <li>无需batch size</li>
 <li>无需动量编码器</li>
 </ol>
-<p><img src="https://s2.loli.net/2023/02/16/lJQzLWFV9gHeid6.png" alt="image-20230216180732377"></p>
-<p>共享参数的两个编码器(没有动量更新，完全copy参数)，predictor同时作用于$x_1,x_2$，随后互相预测，计算<code>mse loss</code></p>
-<script type="math/tex; mode=display">
+<figure>
+<img src="https://s2.loli.net/2023/02/16/lJQzLWFV9gHeid6.png" alt="image-20230216180732377" /><figcaption aria-hidden="true">image-20230216180732377</figcaption>
+</figure>
+<p>共享参数的两个编码器(没有动量更新，完全copy参数)，predictor同时作用于<span class="math inline">\(x_1,x_2\)</span>，随后互相预测，计算<code>mse loss</code> <span class="math display">\[
 x_1 \to p_1\to h_1,x_2\to p_2\to h_2\\
-\mathcal{L} = D(p_1,h_2)+D(p_2,h_1)</script><h3 id="几个工作的对比"><a href="#几个工作的对比" class="headerlink" title="几个工作的对比"></a>几个工作的对比</h3><p><img src="https://s2.loli.net/2023/02/16/jK8zE5PvwMO4XHt.png" alt="image-20230216181120466"></p>
-<ol>
+\mathcal{L} = D(p_1,h_2)+D(p_2,h_1)
+\]</span></p>
+<h3 id="几个工作的对比">几个工作的对比</h3>
+<figure>
+<img src="https://s2.loli.net/2023/02/16/jK8zE5PvwMO4XHt.png" alt="image-20230216181120466" /><figcaption aria-hidden="true">image-20230216181120466</figcaption>
+</figure>
+<ol type="1">
 <li><code>SimCLR</code>和<code>SwAV</code>计算正负样本embedding，优化<code>infonce loss</code>，区别是前者需要迭代两个编码器，后者只需要更新一个</li>
 <li><code>BYOL</code>和<code>SimSiam</code>无需计算<code>infonce loss</code>，转化为预测问题，前者采用动量更新保持参数一致性，后者直接采用同一个网络+stop gradient</li>
 </ol>
-<h2 id="结合Transformer和对比学习"><a href="#结合Transformer和对比学习" class="headerlink" title="结合Transformer和对比学习"></a>结合Transformer和对比学习</h2><h3 id="Moco-v3"><a href="#Moco-v3" class="headerlink" title="Moco-v3"></a>Moco-v3</h3><p>解决自监督Transformer训练不稳定的问题，Backbone换成visual transformer，这种情况下大batch_size performance反而不好</p>
+<h2 id="结合transformer和对比学习">结合Transformer和对比学习</h2>
+<h3 id="moco-v3">Moco-v3</h3>
+<p>解决自监督Transformer训练不稳定的问题，Backbone换成visual transformer，这种情况下大batch_size performance反而不好</p>
 <blockquote>
 <p>随机初始化patch transformer(tokenization，图片序列化)</p>
 </blockquote>
 <p>结合<code>infonce loss</code>和<code>predictive loss</code></p>
-<h3 id="Dino-Self-distillation-with-no-labels"><a href="#Dino-Self-distillation-with-no-labels" class="headerlink" title="Dino(Self-distillation with no labels)"></a>Dino(Self-distillation with no labels)</h3><p><img src="https://s2.loli.net/2023/02/16/KUqm7XgtpcTxOu8.png" alt="image-20230216200246056"></p>
+<h3 id="dinoself-distillation-with-no-labels">Dino(Self-distillation with no labels)</h3>
+<figure>
+<img src="https://s2.loli.net/2023/02/16/KUqm7XgtpcTxOu8.png" alt="image-20230216200246056" /><figcaption aria-hidden="true">image-20230216200246056</figcaption>
+</figure>
 <p>添加centering避免模型坍塌</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2023/02/17/ContrastiveLearningOverview3/" data-id="cle8gag9x0002f88w5uvq7tf1" data-title="ContrastiveLearningOverview3" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2023/02/17/ContrastiveLearningOverview3/" data-id="cle9mgcua0003s48w229jc952" data-title="ContrastiveLearningOverview3" class="article-share-link">Share</a>
       
       
       
