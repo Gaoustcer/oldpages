@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Approximation Algorithm Maxcut and Correlation Cluster | Gaoustcer blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Algorithm review Approximation Algorithm Part5(Max cut and correlation clustering) Approximation rate 主要有两种对Approximation Rate的讨论 Approximation in expectation \[ E[\frac{Alg}{OPT}] \leq(\geq) \al">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Approximation Algorithm Maxcut and Correlation Cluster">
+<meta property="og:url" content="http://example.com/2023/02/19/Approximation-Algorithm-Maxcut-and-Correlation-Cluster/index.html">
+<meta property="og:site_name" content="Gaoustcer blog">
+<meta property="og:description" content="Algorithm review Approximation Algorithm Part5(Max cut and correlation clustering) Approximation rate 主要有两种对Approximation Rate的讨论 Approximation in expectation \[ E[\frac{Alg}{OPT}] \leq(\geq) \al">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://s2.loli.net/2023/01/31/Av16GpfRhx3jOFu.png">
+<meta property="og:image" content="https://s2.loli.net/2023/02/02/1wy8J7XkPLfCohg.png">
+<meta property="og:image" content="https://s2.loli.net/2023/02/02/G9Z42oMhJUnxIqm.png">
+<meta property="article:published_time" content="2023-02-19T03:07:34.000Z">
+<meta property="article:modified_time" content="2023-02-19T03:08:49.013Z">
+<meta property="article:author" content="Haihan Gao">
+<meta property="article:tag" content="Algorithm design and Analysis, Approximation Algorithm">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/01/31/Av16GpfRhx3jOFu.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Gaoustcer blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Gaoustcer blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Approximation-Algorithm-Maxcut-and-Correlation-Cluster" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/02/19/Approximation-Algorithm-Maxcut-and-Correlation-Cluster/" class="article-date">
+  <time class="dt-published" datetime="2023-02-19T03:07:34.000Z" itemprop="datePublished">2023-02-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Approximation Algorithm Maxcut and Correlation Cluster
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="algorithm-review-approximation-algorithm-part5max-cut-and-correlation-clustering">Algorithm review Approximation Algorithm Part5(Max cut and correlation clustering)</h1>
+<h2 id="approximation-rate">Approximation rate</h2>
+<p>主要有两种对Approximation Rate的讨论</p>
+<h3 id="approximation-in-expectation">Approximation in expectation</h3>
+<p><span class="math display">\[
+E[\frac{Alg}{OPT}] \leq(\geq) \alpha
+\]</span></p>
+<p>对于同一个问题，Alg运行的结果带有随机性，结果的期望和最优解之比被bound</p>
+<h3 id="approximation-with-high-probability">Approximation with high probability</h3>
+<p>从概率角度，算法输出和真实值之比被<span class="math inline">\(\alpha\)</span>约束的概率很大 <span class="math display">\[
+Pr[\frac{Alg}{OPT}\leq(\geq)\alpha]&gt;1-\alpha
+\]</span></p>
+<h3 id="approximation-in-expected-running-time">Approximation in expected running time</h3>
+<p>始终满足 <span class="math display">\[
+\frac{Alg}{OPT}\leq (\geq )\alpha
+\]</span> 但是Alg运行时间可能极差</p>
+<h2 id="max-cut">Max Cut</h2>
+<p>给定无向带权图<span class="math inline">\(G=(V,E,w),w_{ij}\geq 0\)</span>，希望找到顶点划分<span class="math inline">\(S,V-E\)</span>，使得cut权重尽量大</p>
+<h3 id="semidefinite-programming">Semidefinite Programming</h3>
+<p>给定<span class="math inline">\(X\in \R^{n\times n}\)</span>的半正定对称矩阵，一定存在分解 <span class="math display">\[
+X=U^T U,U\in \R^{k\times n}
+\]</span> 两个等价定义，定义1 <span class="math display">\[
+\max \sum_{ij} w_{ij} x_{ij}\\
+s.t\quad \sum_{ij} a_{ij}^r x_{ij} \geq b_r,r\in I\\
+X\succeq 0
+\]</span> 定义2(基于矩阵分解) <span class="math display">\[
+\max \sum_{ij}w_{ij}\lang u_i,u_j\rang\\
+s.t\quad \sum_{ij} a_{ij}^r \lang u_i,u_j\rang \geq b_r,r\in I\\
+u_i\in \R^n
+\]</span></p>
+<h3 id="sdp-for-max-cut">SDP For Max Cut</h3>
+定义 $$ v_i ={
+<span class="math display">\[\begin{aligned}
+
+&amp; e,i\in S\\
+&amp; -e,i\notin S
+
+\end{aligned}\]</span>
+<p>. $$ e是一个0-1单位向量，<span class="math inline">\(|e| =|V|\)</span></p>
+<figure>
+<img src="https://s2.loli.net/2023/01/31/Av16GpfRhx3jOFu.png" alt="image-20230131173249369" /><figcaption aria-hidden="true">image-20230131173249369</figcaption>
+</figure>
+<h3 id="sdp-for-max-cut-1">SDP for Max Cut</h3>
+<ol type="1">
+<li>计算最优的Max cut <span class="math inline">\(v_i\)</span></li>
+<li>随机选择单位向量r
+<ol type="1">
+<li><span class="math inline">\(x_1,x_2,\cdots,x_n|\mathcal N(0,1)\)</span></li>
+<li><span class="math inline">\(r = \frac{1}{\sqrt{x_1^2+x_2^2+\cdots+x_n^2}}(x_1,x_2,\cdots,x_n)\)</span></li>
+</ol></li>
+<li><span class="math inline">\(S = \{i\in V|\lang r,v_i\rang \geq 0 \}\)</span></li>
+</ol>
+<h4 id="引理分割定理">引理：分割定理</h4>
+<blockquote>
+<p>单位球上任取两个向量<span class="math inline">\(v_i,v_j\)</span>，再任取一个单位向量<span class="math inline">\(r\)</span>，记事件A,B <span class="math display">\[
+A : \lang v_i,r\rang \geq 0\\
+B : \lang v_j,r\rang \geq 0
+\]</span> &gt; r在单位球上分割<span class="math inline">\(v_i,v_j\)</span></p>
+<p>考虑<span class="math inline">\(Pr(A\bigcap B)\)</span>，对于<span class="math inline">\(v_i,v_j\)</span>构成的圆，他们之间的夹角为 <span class="math display">\[
+\theta = \arccos (\lang v_i,v_j \rang)\\
+Pr(A\bigcap B) =\frac{2\theta}{2\pi}=\frac{1-\lang v_i,v_j\rang}{\pi}\frac{\arccos(\lang v_i,v_j\rang)}{1-\lang v_i,v_j\rang}
+\]</span> 令 <span class="math display">\[
+f(x) = \frac{\arccos x}{1-x},\frac{2}{\pi}\min _x f(x) = 0.878 
+\]</span> 因此 <span class="math display">\[
+Pr(A\bigcap B)\geq 0.878 \frac{1-\lang v_i,v_j \rang}{2}
+\]</span></p>
+</blockquote>
+<h4 id="定理算法最优性">定理：算法最优性</h4>
+<p>根据SDP-MAXCut求解的解记作<span class="math inline">\(OPT_{SDP}\)</span>，它与最优解的关系满足 <span class="math display">\[
+OPT_{SDP}\geq 0.878 OPT
+\]</span></p>
+<p>显然round后的最优解一定比Max-cut原问题更优，即 <span class="math display">\[
+\sum_{(i,j)\in E} \frac{1}{2}w_{ij}(1-\lang v_i^*,v_j^*\rang)\geq OPT
+\]</span> 实际转化为Max-cut后目标解写成 <span class="math display">\[
+\sum_{(i,j)\in E,\lang v_i^*,r\rang \times \lang v_j^*,r\rang \leq 0} \frac{1}{2}w_{ij}
+\]</span> <span class="math inline">\(\lang v_i^*,r\rang\times \lang v_j^*,r\rang \leq 0\)</span>表示<span class="math inline">\(i\in S\)</span>和<span class="math inline">\(j\in S\)</span>不同时成立，同时根据引理，对于任意两个顶点<span class="math inline">\(i,j\)</span>，他们同时属于<span class="math inline">\(S\)</span>的概率为 <span class="math display">\[
+Pr(i,j\in S=False) \geq 0.878 \frac{1-v_i^T v_j}{2}
+\]</span> 写成 <span class="math display">\[
+\sum_{(i,j)\in E}w_{ij} \frac{1-\lang v_i^*,v_j\rang}{2}\leq \frac{1}{0.878} \sum_{(i,j)\in }w_{ij}Pr(i,j\in S=False)=\frac{1}{0.878}E[alg]
+\]</span> 这个算法是<strong>期望上近似</strong>的Approximation Algorithm</p>
+<h2 id="correlation-clusterv1">Correlation cluster(v1)</h2>
+<h3 id="question">Question</h3>
+<p>给定<span class="math inline">\(G=(V,E)\)</span>，<span class="math inline">\(\forall e\in E\)</span>映射为<span class="math inline">\(e\to +\or -\)</span>，要求找到t个partition <span class="math inline">\(P=(P_1,P_2,\cdots,P_t)\)</span>，使得跨cluster之间的positive edges和cluster内的negative egdes之和最大</p>
+<h3 id="from-correlation-cluster-to-sdp">from correlation cluster to SDP</h3>
+<p>定义<code>sgn</code>函数 <span class="math display">\[
+\forall(i,j)\in E,sgn(ij) =\left\{
+\begin{aligned}
+&amp;1,(i,j)\to +\\
+&amp;-1,(i,j)\to -
+\end{aligned}
+\right.
+\]</span> 对于包含n个结点的图，定义$e_{k}{0,1}^n <span class="math inline">\(且\)</span>e_k$是单位向量(第k维为1，其余为0)</p>
+<blockquote>
+<p>这里讲义中是否存在问题，貌似<span class="math inline">\(e_k\in \{0,1\}^t\)</span>更加合理</p>
+</blockquote>
+<p>写成SDP <span class="math display">\[
+\max\sum_{i&lt;j,sgn(ij)=1}x_i^T x_j +\sum_{i&lt;j,sgn(ij)=-1}(1-x_i^Tx_j)\\
+s.t\quad x_i\in \{e_1,e_2,\cdots,e_n\},i\in V
+\]</span></p>
+<ol type="1">
+<li><span class="math inline">\(i&lt;j\)</span>是因为无向图</li>
+<li><span class="math inline">\(x_i\)</span>作为标志每个节点的indicate variable</li>
+</ol>
+<p>SDP relaxation形式，约束变成 <span class="math display">\[
+x_i^T x_i = 1,x_i^Tx_j\geq 0,x_i\in \R^n,i,j\in V
+\]</span></p>
+<h3 id="algorithm-sdp-cc">Algorithm: SDP-CC</h3>
+<p>随机选择两个单位球上的向量<span class="math inline">\(r_1,r_2\)</span>，将空间分成4个部分</p>
+<figure>
+<img src="https://s2.loli.net/2023/02/02/1wy8J7XkPLfCohg.png" alt="image-20230202165015295" /><figcaption aria-hidden="true">image-20230202165015295</figcaption>
+</figure>
+<p>对于<span class="math inline">\(\forall (i,j)\in E\)</span>，定义<span class="math inline">\(q_{ij}\)</span>为<span class="math inline">\(v_i,v_j\)</span>落在两个hyperplane同一侧的概率，显然 <span class="math display">\[
+q_{ij} = (1-\frac{\arccos v_i^T v_j}{\pi})^2\Leftrightarrow i\in R_1\bigcup R_4,j\in R_1\bigcup R_4
+\]</span> 加上平方项是因为有两个超平面，算法运行的期望为 <span class="math display">\[
+\sum_{i&lt;j,sgn(i,j)=1}q_{ij}+\sum_{i&lt;j,sgn(i,j)=-1}(1-q_{ij})
+\]</span> 显然有 <span class="math display">\[
+\alpha_1 = \min_z \frac{(1-\frac{\arccos(z)}{\pi})^2}{z},\alpha_2 =\min_z \frac{(1-(1-\frac{\arccos z}{\pi})^2)}{1-z},\alpha^*=\min{\alpha_1,\alpha_2}\geq 0.75
+\]</span> Round结果显然比之前更优，因此 <span class="math display">\[
+\sum_{i&lt;j,sgn(ij)=1}v_i^* v_j +\sum_{i&lt;j,sgn(ij)=-1} (1-v_i^*v_j)\geq OPT
+\]</span> 得到算法是0.75近似</p>
+<h2 id="correlation-clusteringv2">Correlation clustering(v2)</h2>
+<h3 id="problem">Problem</h3>
+<p>希望disagreement of G最小，disagreement定义为</p>
+<blockquote>
+<p>节点聚类<span class="math inline">\(P=(P_1,P_2,\cdots,P_t)\)</span>中聚类内部的negative edges和聚类之间的positive edges之和</p>
+</blockquote>
+<h3 id="algorithm-pivot-cc">Algorithm: PIVOT-CC</h3>
+<figure>
+<img src="https://s2.loli.net/2023/02/02/G9Z42oMhJUnxIqm.png" alt="image-20230202174334789" /><figcaption aria-hidden="true">image-20230202174334789</figcaption>
+</figure>
+<p>不断去除节点的positive neighbor</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/02/19/Approximation-Algorithm-Maxcut-and-Correlation-Cluster/" data-id="cleatew0j0001bk8w7k6nhjoz" data-title="Approximation Algorithm Maxcut and Correlation Cluster" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Algorithm-design-and-Analysis-Approximation-Algorithm/" rel="tag">Algorithm design and Analysis, Approximation Algorithm</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2023/02/19/Approximation-Algorithm-TSP-Max-2-SAT/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Approximation Algorithm TSP Max 2-SAT
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2023/02/19/hardness-of-approximation/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">hardness of approximation</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Algorithm-design-and-Analysis-Approximation-Algorithm/" rel="tag">Algorithm design and Analysis, Approximation Algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Contrastive-Learning-Deep-Learning-Unsupervised-Learning/" rel="tag">Contrastive Learning, Deep Learning, Unsupervised Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Random-Process-Dirichlet-Process/" rel="tag">Random Process, Dirichlet Process</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Use-of-Hexo/" rel="tag">Use of Hexo</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Algorithm-design-and-Analysis-Approximation-Algorithm/" style="font-size: 20px;">Algorithm design and Analysis, Approximation Algorithm</a> <a href="/tags/Contrastive-Learning-Deep-Learning-Unsupervised-Learning/" style="font-size: 15px;">Contrastive Learning, Deep Learning, Unsupervised Learning</a> <a href="/tags/Random-Process-Dirichlet-Process/" style="font-size: 10px;">Random Process, Dirichlet Process</a> <a href="/tags/Use-of-Hexo/" style="font-size: 10px;">Use of Hexo</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/02/">February 2023</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/02/19/Approximation-Algorithm-Sparest-Cut/">Approximation Algorithm Sparest Cut</a>
+          </li>
+        
+          <li>
+            <a href="/2023/02/19/Approximation-Algorithm-TSP-Max-2-SAT/">Approximation Algorithm TSP Max 2-SAT</a>
+          </li>
+        
+          <li>
+            <a href="/2023/02/19/Approximation-Algorithm-Maxcut-and-Correlation-Cluster/">Approximation Algorithm Maxcut and Correlation Cluster</a>
+          </li>
+        
+          <li>
+            <a href="/2023/02/19/hardness-of-approximation/">hardness of approximation</a>
+          </li>
+        
+          <li>
+            <a href="/2023/02/17/Dirichletprocess1/">Dirichletprocess1</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Haihan Gao<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

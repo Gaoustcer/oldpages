@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Approximation Algorithm TSP Max 2-SAT | Gaoustcer blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Approximation Algorithm(TSP,Max 2-SAT and k-center) TSP Problem 无向带权图中，寻找环路遍历每个顶点，使得距离最小，权重\(w(u,v)\)满足 \[ w(u,v)\leq w(u,x)+w(x,v) \] algorithm(FINDTOUR)  找到graph的一个最小生成树T 在T上重复每个边两次，得到H 在H">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Approximation Algorithm TSP Max 2-SAT">
+<meta property="og:url" content="http://example.com/2023/02/19/Approximation-Algorithm-TSP-Max-2-SAT/index.html">
+<meta property="og:site_name" content="Gaoustcer blog">
+<meta property="og:description" content="Approximation Algorithm(TSP,Max 2-SAT and k-center) TSP Problem 无向带权图中，寻找环路遍历每个顶点，使得距离最小，权重\(w(u,v)\)满足 \[ w(u,v)\leq w(u,x)+w(x,v) \] algorithm(FINDTOUR)  找到graph的一个最小生成树T 在T上重复每个边两次，得到H 在H">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://s2.loli.net/2023/02/09/J3vrqXAfKgZhVLn.png">
+<meta property="article:published_time" content="2023-02-19T03:09:23.000Z">
+<meta property="article:modified_time" content="2023-02-19T03:10:23.974Z">
+<meta property="article:author" content="Haihan Gao">
+<meta property="article:tag" content="Algorithm design and Analysis, Approximation Algorithm">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/02/09/J3vrqXAfKgZhVLn.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Gaoustcer blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Gaoustcer blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Approximation-Algorithm-TSP-Max-2-SAT" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/02/19/Approximation-Algorithm-TSP-Max-2-SAT/" class="article-date">
+  <time class="dt-published" datetime="2023-02-19T03:09:23.000Z" itemprop="datePublished">2023-02-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Approximation Algorithm TSP Max 2-SAT
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="approximation-algorithmtspmax-2-sat-and-k-center">Approximation Algorithm(TSP,Max 2-SAT and k-center)</h1>
+<h2 id="tsp">TSP</h2>
+<h3 id="problem">Problem</h3>
+<p>无向带权图中，寻找环路遍历每个顶点，使得距离最小，权重<span class="math inline">\(w(u,v)\)</span>满足 <span class="math display">\[
+w(u,v)\leq w(u,x)+w(x,v)
+\]</span></p>
+<h3 id="algorithmfindtour">algorithm(FINDTOUR)</h3>
+<ol type="1">
+<li>找到graph的一个最小生成树T</li>
+<li>在T上重复每个边两次，得到H</li>
+<li>在H上找到一条Eulerian回路C</li>
+<li>构建TSP，如果C上遍历一个vertex两次，则跳过这个vertex直接visit下一个vertex</li>
+</ol>
+<h4 id="approximation-algorithm">2-Approximation algorithm</h4>
+<p><span class="math inline">\(C^*\)</span>是optimal tour的开销，必然有 <span class="math display">\[
+MST\leq C^*
+\]</span> 这是因为<span class="math inline">\(C^*\)</span>移除一条边必然构成G的生成树，因此 <span class="math display">\[
+Cost(Eulerian\ tour)\leq 2C^*\\
+Cost(final\ output)\leq 2C^*
+\]</span></p>
+<h3 id="approximation-algorithm-of-tsp">1.5 approximation algorithm of TSP</h3>
+<h4 id="algorithm">Algorithm</h4>
+<ol type="1">
+<li>获得MST T</li>
+<li>在MST的偶数度数顶点中计算最小代价完全匹配M，将M加入到T中获得欧拉图H</li>
+<li>在H上获得欧拉回路C</li>
+<li>基于FINDTOUR相同的算法从C构建出一条欧拉回路</li>
+</ol>
+<h4 id="引理偶数顶点minimum-cost-perfect-matching的代价">引理：偶数顶点minimum cost perfect matching的代价</h4>
+<p>设<span class="math inline">\(V^\prime\subseteq V,|V^\prime|\)</span>为偶数，M是<span class="math inline">\(V^\prime\)</span>上的minimum cost perfect matching，则确定M cost上界 <span class="math display">\[
+cost(M)\leq \frac{C^*}{2}
+\]</span></p>
+<blockquote>
+<p>proof，在一个cost为<span class="math inline">\(C^*\)</span>的最优TSP tour <span class="math inline">\(T^\prime\)</span>上去掉<span class="math inline">\(V-V^\prime\)</span>(做shortcut，和FINDTOUR相同)得到新的在<span class="math inline">\(V^\prime\)</span>上的回路<span class="math inline">\(T\)</span>，必然有 $$ cost(T)cost(T^) = C^*</p>
+</blockquote>
+<blockquote>
+<p><span class="math display">\[
+考虑$V^\prime$组成的环路，记作
+\]</span> v_1,v_2,,v_{2k},v_1 <span class="math display">\[
+则取一个match
+\]</span> (v_1,v_2),(v_3,v_4),,(v_{2k-1},v_{2k}) <span class="math display">\[
+WLOG，假设这个match M的cost满足
+\]</span> 2 cost(M)cost(T^) = C^* $$ &gt; 如果不成立，则<span class="math inline">\((v_2,v_3),(v_4,v_5),\cdots,(v_{2k},v_1)\)</span>的cost必然<span class="math inline">\(\leq \frac{C^*}{2}\)</span></p>
+<p>基于上述讨论，有 <span class="math display">\[
+cost(M+MST)\leq \frac{3}{2}C^*
+\]</span> Q.E.D</p>
+</blockquote>
+<h2 id="max-2-sat">MAX 2-SAT</h2>
+<h3 id="problem-1">Problem</h3>
+<p>给定n个bool变量<span class="math inline">\(x_1,x_2,\cdots,x_n\)</span>和m个合取范式<span class="math inline">\(C_1,C_2,\cdots,C_m\)</span></p>
+<blockquote>
+<p>每个clause是两个子句<span class="math inline">\(t_1,t_2\)</span>的或，子句采样自<span class="math inline">\(x_1,x_2,\cdots,x_n,\not {x_1},\not x_2,\cdots,\not x_n\)</span></p>
+</blockquote>
+<p>找到变量赋值使得被满足的合取范式最多</p>
+<h3 id="randomassign">RANDOMASSIGN</h3>
+<p>随机给变量赋值，是<span class="math inline">\(\frac{3}{4}\)</span>近似最优算法，对于每个子句<span class="math inline">\(Y_i\)</span> <span class="math display">\[
+Pr(Y_i=1) = 1-Pr(Y_i = 0) = \frac{3}{4}
+\]</span> 所有子句 <span class="math display">\[
+E[Y] = \sum_{i=1}^m E[Y_i] = \frac{3}{4}m\geq \frac 3 4 OPT
+\]</span></p>
+<h2 id="complex-theory">Complex Theory</h2>
+<h3 id="可解决问题">可解决问题</h3>
+<p>定义：P为所有在多项式时间内可以解决的问题集合</p>
+<h3 id="多项式规约">多项式规约</h3>
+<p>可以在多项式时间内将问题X转化为问题Y，指的是存在一个多项式算法，可以将每个X的实例x通过算法<span class="math inline">\(\mathcal A\)</span>在多项式事件内转化为Y中的instance y，并满足</p>
+<figure>
+<img src="https://s2.loli.net/2023/02/09/J3vrqXAfKgZhVLn.png" alt="image-20230209163631473" /><figcaption aria-hidden="true">image-20230209163631473</figcaption>
+</figure>
+<p>若 <span class="math display">\[
+X\leq_P Y
+\]</span></p>
+<ol type="1">
+<li>Y存在多项式算法则X必然存在多项式算法</li>
+<li>X不存在多项式算法则Y必然不存在多项式算法</li>
+</ol>
+<p>X可以在多项式时间内规约成Y</p>
+<h3 id="p类问题np问题和pnp">P类问题，NP问题和P=NP</h3>
+<ol type="1">
+<li>P类问题：一个可以在多项式时间内找到solution的问题</li>
+<li>NP问题：可以在多项式时间内验证一个解(多项式时间内猜出一个解)</li>
+</ol>
+<blockquote>
+<ol type="1">
+<li>在一个图中找出Hamilton回路(NP问题)</li>
+<li>是否存在Hamilton回路(不是NP问题)</li>
+</ol>
+<p>所有P问题都是NP问题，必然有<span class="math inline">\(P\subseteq NP\)</span></p>
+</blockquote>
+<h3 id="npc问题">NPC问题</h3>
+<blockquote>
+<p>Hamiton问题在一个非完全图上找回路，TSP是在完全带权图上找回图，Hamition转化为TSP则是在带权图(真正在G中相邻权重为0，否则为1)是否存在权重为0的葫芦</p>
+</blockquote>
+<p>问题多项式约化<span class="math inline">\(X\leq_{P} Y\)</span>表明问题Y的难度一定不会超过X，NPC问题解决的是，是否存在一类问题，使得所有的NP问题都可以约化为它，如果解决这类问题则所有NP问题都可以解决，一个NPC问题需要满足如下条件</p>
+<ol type="1">
+<li>是一个NP问题<span class="math inline">\(NPC\subseteq NP\)</span></li>
+<li>一个已知的NPC问题可以归约到它</li>
+</ol>
+<blockquote>
+<p>如何找到<strong>第一个</strong>NPC问题？</p>
+</blockquote>
+<h3 id="nphard问题">NPHard问题</h3>
+<p>满足第二条但是不满足第一条</p>
+<h3 id="第一个npc问题逻辑电路">第一个NPC问题：逻辑电路</h3>
+<p>给定逻辑电路，是否存在一种输入使得输出为True</p>
+<blockquote>
+<p>任何一个NPC问题可以归约到此</p>
+</blockquote>
+<blockquote>
+<p>An example of Reduction <span class="math inline">\(IS=_P VC\)</span></p>
+<p><code>Independent Set</code> and <code>Vertex Cover</code>，前者描述G中存在最多多少点两两不相交(是否存在大小不少于为k的Independent Set?)，后者描述的是最小需要多少点可以使得每个边至少被一个顶点关联(是否存在大小不超过k的vertex cover)，只需要证明</p>
+<ol type="1">
+<li>如果X是一个vertex cover，则<span class="math inline">\(V-X\)</span>是一个独立集合</li>
+<li>如果X是一个Independent set，则<span class="math inline">\(V-X\)</span>是一个vertex cover</li>
+</ol>
+<p>Another example of Reduction <span class="math inline">\(VC\leq SC(Set\ Cover)\)</span></p>
+<p>Set Cover描述的是对于一个全集U和它的若干子集<span class="math inline">\(S_1,S_2,\cdots,S_m\)</span>，是否存在不多于k个子集使得它们的并等于U？Vertex Cover的一个instance记作<span class="math inline">\((G,k)\)</span>，一个Vertex Cover的Set Cover instance包括</p>
+<p>图的每个边映射为全集U中的一个元素，每个顶点映射为一个subset，它的元素是它关联的边</p>
+</blockquote>
+<h3 id="可满足和3-可满足">可满足和3-可满足</h3>
+<ol type="1">
+<li>可满足：逻辑电路(一个Conjunctive Normal Form的布尔函数是否是可满足的，Conjuctive Normal Form写成若干子句的且，每个子句是literal的或操作)</li>
+<li>3-可满足，每个子句仅包括3个literal的或操作</li>
+</ol>
+<p>定理 <span class="math display">\[
+3-SAT\leq_P IS
+\]</span> 3-满足问题经过多项式事件可以规约为最大独立集 <span class="math display">\[
+包含n个变量，m个clauses的3-SAT问题\\{\Rightarrow}是否可满足^{P规约}构造一个图，包含3m个节点，是否存在大小为m的独立集合
+\]</span></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/02/19/Approximation-Algorithm-TSP-Max-2-SAT/" data-id="cleatew0n0005bk8w3299ai68" data-title="Approximation Algorithm TSP Max 2-SAT" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Algorithm-design-and-Analysis-Approximation-Algorithm/" rel="tag">Algorithm design and Analysis, Approximation Algorithm</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2023/02/19/Approximation-Algorithm-Sparest-Cut/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Approximation Algorithm Sparest Cut
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2023/02/19/Approximation-Algorithm-Maxcut-and-Correlation-Cluster/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Approximation Algorithm Maxcut and Correlation Cluster</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Algorithm-design-and-Analysis-Approximation-Algorithm/" rel="tag">Algorithm design and Analysis, Approximation Algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Contrastive-Learning-Deep-Learning-Unsupervised-Learning/" rel="tag">Contrastive Learning, Deep Learning, Unsupervised Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Random-Process-Dirichlet-Process/" rel="tag">Random Process, Dirichlet Process</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Use-of-Hexo/" rel="tag">Use of Hexo</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Algorithm-design-and-Analysis-Approximation-Algorithm/" style="font-size: 20px;">Algorithm design and Analysis, Approximation Algorithm</a> <a href="/tags/Contrastive-Learning-Deep-Learning-Unsupervised-Learning/" style="font-size: 15px;">Contrastive Learning, Deep Learning, Unsupervised Learning</a> <a href="/tags/Random-Process-Dirichlet-Process/" style="font-size: 10px;">Random Process, Dirichlet Process</a> <a href="/tags/Use-of-Hexo/" style="font-size: 10px;">Use of Hexo</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/02/">February 2023</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/02/19/Approximation-Algorithm-Sparest-Cut/">Approximation Algorithm Sparest Cut</a>
+          </li>
+        
+          <li>
+            <a href="/2023/02/19/Approximation-Algorithm-TSP-Max-2-SAT/">Approximation Algorithm TSP Max 2-SAT</a>
+          </li>
+        
+          <li>
+            <a href="/2023/02/19/Approximation-Algorithm-Maxcut-and-Correlation-Cluster/">Approximation Algorithm Maxcut and Correlation Cluster</a>
+          </li>
+        
+          <li>
+            <a href="/2023/02/19/hardness-of-approximation/">hardness of approximation</a>
+          </li>
+        
+          <li>
+            <a href="/2023/02/17/Dirichletprocess1/">Dirichletprocess1</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Haihan Gao<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

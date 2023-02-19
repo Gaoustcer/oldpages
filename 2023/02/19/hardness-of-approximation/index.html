@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>hardness of approximation | Gaoustcer blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Approximation Algorithm(Hardness of Approximation) Hardness of Approximation 近似算法复杂度仍然太高 gap reduction 定义NP到P的\((f,c_1,c_2)\) gap reduction，将问题L映射为问题\(\Pi\)(最小化问题)  L是NPC判定问题，\(\Pi\)是NPH最小化问题，从N">
+<meta property="og:type" content="article">
+<meta property="og:title" content="hardness of approximation">
+<meta property="og:url" content="http://example.com/2023/02/19/hardness-of-approximation/index.html">
+<meta property="og:site_name" content="Gaoustcer blog">
+<meta property="og:description" content="Approximation Algorithm(Hardness of Approximation) Hardness of Approximation 近似算法复杂度仍然太高 gap reduction 定义NP到P的\((f,c_1,c_2)\) gap reduction，将问题L映射为问题\(\Pi\)(最小化问题)  L是NPC判定问题，\(\Pi\)是NPH最小化问题，从N">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://s2.loli.net/2023/02/16/nHMbhZRf7CYKUoG.png">
+<meta property="article:published_time" content="2023-02-19T03:04:01.000Z">
+<meta property="article:modified_time" content="2023-02-19T03:06:43.267Z">
+<meta property="article:author" content="Haihan Gao">
+<meta property="article:tag" content="Algorithm design and Analysis, Approximation Algorithm">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/02/16/nHMbhZRf7CYKUoG.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Gaoustcer blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Gaoustcer blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-hardness-of-approximation" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/02/19/hardness-of-approximation/" class="article-date">
+  <time class="dt-published" datetime="2023-02-19T03:04:01.000Z" itemprop="datePublished">2023-02-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      hardness of approximation
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="approximation-algorithmhardness-of-approximation">Approximation Algorithm(Hardness of Approximation)</h1>
+<h2 id="hardness-of-approximation">Hardness of Approximation</h2>
+<p>近似算法复杂度仍然太高</p>
+<h3 id="gap-reduction">gap reduction</h3>
+<p>定义NP到P的<span class="math inline">\((f,c_1,c_2)\)</span> gap reduction，将问题L映射为问题<span class="math inline">\(\Pi\)</span>(最小化问题)</p>
+<blockquote>
+<p>L是NPC判定问题，<span class="math inline">\(\Pi\)</span>是NPH最小化问题，从NPC问题构造最优化问题，NPC问题只有Yes instance和No instance</p>
+</blockquote>
+<ol type="1">
+<li>f是problem instance之间的映射(规约)</li>
+<li><span class="math inline">\(c_1,c_2\)</span>是<span class="math inline">\(N\to Q^+\)</span>的映射函数(复杂性，最优性)</li>
+<li><span class="math inline">\(f,c_1,c_2\)</span>都是多项式复杂性函数</li>
+<li><span class="math inline">\(x\in L,OPT(f(x))\leq c_1 |f(x)|\)</span>（输入是Yes instance，<span class="math inline">\(|f(x)|\)</span>表示reduction大小）</li>
+<li><span class="math inline">\(x\notin L,OPT(f(x))&gt; c_2 |f(x)|\)</span>（输入时No instance，OPT不可能太小）</li>
+</ol>
+<blockquote>
+<p>假设最优化问题<span class="math inline">\(\Pi\)</span>存在近似比为<span class="math inline">\(\frac{c_2}{c_1}\)</span>的近似比算法<span class="math inline">\(\mathcal {A}\)</span>，对于每个L的实例<span class="math inline">\(l\in L\)</span>，构造出<span class="math inline">\(\Pi\)</span>中的实例<span class="math inline">\(I^\prime\)</span>，两种情况 $$ OPT(I^)c_1 |I<sup>|A(I</sup>)OPT(I^)c_2 |I^|IL(Yes instance)\ OPT(I^)c_2 |I<sup>|A(I</sup>)c_2 |I^|IL(No instance)</p>
+</blockquote>
+<blockquote>
+<p>$$ 则NPC被解决<span class="math inline">\(\mathcal A+reduction\)</span>，这和假设<span class="math inline">\(NP\neq P\)</span>矛盾，因此在<span class="math inline">\(NP\neq P\)</span>假设下，不存在<span class="math inline">\(\frac{c_2}{c_1}\)</span>近似算法</p>
+</blockquote>
+<p>Hardness of Approximation实际上描述了不同近似问题具有的近似比的性质，显然常数近似，指数近似，对数近似不是一类问题</p>
+<h2 id="k-center-problem">K-center problem</h2>
+<h3 id="problem">Problem</h3>
+<p>无向完全图<span class="math inline">\(G=(V,E)\)</span>，定义边权<span class="math inline">\(d_{ij}\)</span>满足距离性质<span class="math inline">\(d_{ij}\leq d_{ik}+ d_{kj}\)</span></p>
+<blockquote>
+<p>找到大小为k的子集S，使得cost of S最小，cost定义为 <span class="math display">\[
+cost(S) = \max_{v\in V}  \min_{s\in S} d_{is}
+\]</span> 定义为每个点到S距离的最大值</p>
+</blockquote>
+<p>已知存在2-approximation算法（<code>GREADYCENTER</code>，每次寻找距离S最大的节点加入S），证明<code>P=NP</code>假设下的一个推论</p>
+<h3 id="定理假设pneq-np则对forall-epsilon-0k-center不存在2-epsilon近似算法">定理：假设<span class="math inline">\(P\neq NP\)</span>，则对<span class="math inline">\(\forall \epsilon &gt;0\)</span>，k-center不存在<span class="math inline">\((2-\epsilon)\)</span>近似算法</h3>
+<h4 id="定义dspnpcdominated-set">定义DSP(NPC,dominated set)</h4>
+<blockquote>
+<p>NPH不一定能在多项式时间内验证解的正确性，因此不一定属于NP，和NPC不同，后者一定是NP的子集</p>
+</blockquote>
+<figure>
+<img src="https://s2.loli.net/2023/02/16/nHMbhZRf7CYKUoG.png" alt="image-20230216154813881" /><figcaption aria-hidden="true">image-20230216154813881</figcaption>
+</figure>
+<blockquote>
+<p>注意这里的规约方向是<span class="math inline">\(DSP\to k-center\)</span>，只要解决k-center就一定能解决DSP</p>
+</blockquote>
+<p>所有节点要么在S中要么在S的相邻节点中，给定一个DSP的instance <span class="math inline">\(\lang G=(V,E),k\rang\)</span>，构造对应的k-center problem实例 <span class="math inline">\(\lang G = (V,E^\prime),d_{ij},k\rang\)</span></p>
+<blockquote>
+<p><span class="math inline">\((i,j)\in E\to d_{ij }=1\)</span>否则<span class="math inline">\(d_{ij}=2\)</span></p>
+</blockquote>
+<p>Dominate Set S存在$$Optimal radius of k-center problem H is 1</p>
+<blockquote>
+<p>存在S，则V-S的任何节点均和S相邻，<span class="math inline">\(\forall v\in V-S ,d_{v S} = 1\)</span>(权重定义)</p>
+</blockquote>
+<p>不存在<span class="math inline">\((2-\epsilon)\)</span>近似，因为任何近似算法输出为1或2</p>
+<blockquote>
+<p>考虑带权完全图，边权<span class="math inline">\(w\in \{1,2\}\)</span>，求大小为S的点子集，使得 <span class="math display">\[
+cost(S) =\max_{v\in V} d_{vS}
+\]</span> 最小。显然，<span class="math inline">\(\forall v\in V-S ,d_{vS} = 1/2\)</span>，假设DSP的回答是yes，则必然有<span class="math inline">\(cost(S) = 1\)</span>。如果存在<span class="math inline">\((2-\epsilon)\)</span>近似，则求出的近似解<span class="math inline">\(S^*\)</span>满足 <span class="math display">\[
+\frac{cost(S^*)}{cost(S)}\leq 2-\epsilon
+\]</span> 则<span class="math inline">\(cost(S^*)=1\)</span>，即求解<span class="math inline">\(DSP\)</span> reduction问题，通过最优解可以判断原问题解是否存在（如果<span class="math inline">\(cost(S^*)=1\)</span>则存在DSP集合S，否则不存在）并且求出的集合<span class="math inline">\(S^*\)</span>就是DSP的解(可以在多项式时间内判断输入<span class="math inline">\(S\)</span>时DSP是否回答Yes)，这和NPH矛盾</p>
+</blockquote>
+<p><span class="math display">\[
+c_1(n)=1,c_2(n)=2-\epsilon
+\]</span></p>
+<p>这是因为必然有 <span class="math display">\[
+cost(DSP)\leq cost(f(DSP))
+\]</span></p>
+<h2 id="bin-packing-problem">Bin Packing Problem</h2>
+<h3 id="problem-1">Problem</h3>
+<p>给定包含n个item的集合，每个item <span class="math inline">\(o_i\)</span>具有size <span class="math inline">\(s_i\in(0,1]\)</span>，定义包含n个bins的集合B，每个bin的容量是1</p>
+<blockquote>
+<p>将item放到不同bins中，满足</p>
+<ol type="1">
+<li>每个bins能承载所属的item</li>
+<li>使用尽量少的bins(即将多个item尽量放在一个bin中)，一个bin放一个item一定放得下，但是太浪费了</li>
+</ol>
+<blockquote>
+<p>找到item到bin的映射</p>
+</blockquote>
+</blockquote>
+<h3 id="firstfit">FIRSTFIT</h3>
+<ol type="1">
+<li>按照顺序依次放置item，放不下则转移到下一个bin</li>
+<li>下一个item来也需要从第一个bin开始遍历，找到能放下的bin</li>
+</ol>
+<h4 id="近似算法">2-近似算法</h4>
+<blockquote>
+<p>假设<code>FIRSTFIT</code>需要m个bins，则至少m-1个bins花了至少一半的capacity装items（不可能有两个都没装到一半，否则可以合并为1个），定义这些bin为good bins。最优解OPT必然有 <span class="math display">\[
+OPT\geq \sum_{i=1}^n s_i
+\]</span> 必然有 <span class="math display">\[
+\sum_{i=1}^n s_i \geq \sum_{i\to good\ bins} s_i&gt;\frac{m-1}{2}
+\]</span> 得证，关键使用<span class="math inline">\(\sum s_i\)</span>作为桥梁沟通最优解和近似解</p>
+</blockquote>
+<h3 id="定理如果pneq-np对于bin-packing-problem不存在frac32-epsilon近似算法">定理：如果<span class="math inline">\(P\neq NP\)</span>，对于bin packing problem不存在<span class="math inline">\(\frac{3}{2}-\epsilon\)</span>近似算法</h3>
+<h4 id="partition-problem">Partition Problem</h4>
+<p>给定一个包含n个数的set，<span class="math inline">\(c_i\)</span>是整数</p>
+<blockquote>
+<p>是否存在1-n的下标子集S <span class="math inline">\(S\in \{1,2,\cdots,n\}\)</span>，使得 <span class="math display">\[
+\sum_{i\in S} c_i = \sum_{i\neq S} c_i
+\]</span> 假设每个数不会超过总和的一半，不然问题显然是No</p>
+</blockquote>
+<h4 id="reduction-partitionto-bin-packing">Reduction <span class="math inline">\(Partition\to Bin \ Packing\)</span></h4>
+<p>对于包含n个数的partition instance <span class="math inline">\(I=(c_1,c_2,\cdots,c_n)\)</span>，定义它reduction生成的Bin Packing instance <span class="math inline">\(I^\prime\)</span>:item <span class="math inline">\(o_i,s_i=\frac{2c_i}{C}\)</span>，给定问题能否将Bin Packing问题放在两个bins中</p>
+<ol type="1">
+<li>假设S是partition instance <span class="math inline">\(I\)</span>，则可以将<span class="math inline">\(I^\prime\)</span>放置到两个bins</li>
+<li><span class="math inline">\(I\)</span>如果无解则<span class="math inline">\(I^\prime\)</span>至少需要3个bins</li>
+</ol>
+<blockquote>
+<p>同样，逻辑上是 <span class="math display">\[
+存在\frac{3}{2}-\epsilon近似\to 可以在多项式时间内解决Partition问题
+\]</span></p>
+<ol type="1">
+<li>如果<span class="math inline">\(I\)</span>是一个Yes instance，近似解满足<span class="math inline">\((\frac{3}{2} -\epsilon)\cdot 2 &lt; 3\)</span>，必然得到2 bins</li>
+<li>如果<span class="math inline">\(\frac{3}{2}-\epsilon\)</span>算法解出至少要放在3 bins，则<span class="math inline">\(I\to No\)</span></li>
+</ol>
+<p>因为partition是一个NPH问题，这和<span class="math inline">\(P\neq NP\)</span>假设矛盾</p>
+</blockquote>
+<blockquote>
+<p>这两个例子都告诉我们，<span class="math inline">\(NP\neq P\)</span>假设下，2近似或<span class="math inline">\(\frac{3}{2}\)</span>近似已经是最好的近似算法。证明思路类似，都是从一个NPC问题判断规约到当前最优化近似问题</p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/02/19/hardness-of-approximation/" data-id="cleatew0r000abk8w5fi24ttq" data-title="hardness of approximation" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Algorithm-design-and-Analysis-Approximation-Algorithm/" rel="tag">Algorithm design and Analysis, Approximation Algorithm</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2023/02/19/Approximation-Algorithm-Maxcut-and-Correlation-Cluster/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Approximation Algorithm Maxcut and Correlation Cluster
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2023/02/17/Dirichletprocess1/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Dirichletprocess1</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Algorithm-design-and-Analysis-Approximation-Algorithm/" rel="tag">Algorithm design and Analysis, Approximation Algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Contrastive-Learning-Deep-Learning-Unsupervised-Learning/" rel="tag">Contrastive Learning, Deep Learning, Unsupervised Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Random-Process-Dirichlet-Process/" rel="tag">Random Process, Dirichlet Process</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Use-of-Hexo/" rel="tag">Use of Hexo</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Algorithm-design-and-Analysis-Approximation-Algorithm/" style="font-size: 20px;">Algorithm design and Analysis, Approximation Algorithm</a> <a href="/tags/Contrastive-Learning-Deep-Learning-Unsupervised-Learning/" style="font-size: 15px;">Contrastive Learning, Deep Learning, Unsupervised Learning</a> <a href="/tags/Random-Process-Dirichlet-Process/" style="font-size: 10px;">Random Process, Dirichlet Process</a> <a href="/tags/Use-of-Hexo/" style="font-size: 10px;">Use of Hexo</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/02/">February 2023</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/02/19/Approximation-Algorithm-Sparest-Cut/">Approximation Algorithm Sparest Cut</a>
+          </li>
+        
+          <li>
+            <a href="/2023/02/19/Approximation-Algorithm-TSP-Max-2-SAT/">Approximation Algorithm TSP Max 2-SAT</a>
+          </li>
+        
+          <li>
+            <a href="/2023/02/19/Approximation-Algorithm-Maxcut-and-Correlation-Cluster/">Approximation Algorithm Maxcut and Correlation Cluster</a>
+          </li>
+        
+          <li>
+            <a href="/2023/02/19/hardness-of-approximation/">hardness of approximation</a>
+          </li>
+        
+          <li>
+            <a href="/2023/02/17/Dirichletprocess1/">Dirichletprocess1</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Haihan Gao<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

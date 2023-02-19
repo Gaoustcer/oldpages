@@ -75,6 +75,674 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-Approximation-Algorithm-Sparest-Cut" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/02/19/Approximation-Algorithm-Sparest-Cut/" class="article-date">
+  <time class="dt-published" datetime="2023-02-19T03:10:58.000Z" itemprop="datePublished">2023-02-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2023/02/19/Approximation-Algorithm-Sparest-Cut/">Approximation Algorithm Sparest Cut</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="approximation-algorithmsparsest-cut">Approximation Algorithm(Sparsest Cut)</h1>
+<h2 id="metric-embedding">Metric embedding</h2>
+<h3 id="embedding-metric">Embedding metric</h3>
+<figure>
+<img src="https://s2.loli.net/2023/02/03/Yb3fq65CekyjxFS.png" alt="image-20230203165751416" /><figcaption aria-hidden="true">image-20230203165751416</figcaption>
+</figure>
+<p>d是V上的一种距离度量</p>
+<blockquote>
+<p>注意是先确定d在找到合适的f</p>
+</blockquote>
+<h3 id="metric-embedding-in-a-graph">Metric embedding in a graph</h3>
+<p>定义图G上cut S的indictor function <span class="math inline">\(\chi_{\delta(S)}(u,v)\)</span> <span class="math display">\[
+\chi_{\delta(S)}(u,v) =\left\{
+\begin{aligned}
+&amp;1 ,u/v \ exactly\ one \ in\ S\\
+&amp;0,else
+\end{aligned}
+\right.
+\]</span></p>
+<h3 id="metric-embedding-with-distortion-alpha">Metric Embedding with distortion <span class="math inline">\(\alpha\)</span></h3>
+<p>有时候不能找到准确的函数f使得满足定义1，因此提出distortion形式，<span class="math inline">\(\alpha\)</span>决定了upper bound和lower bound之间的Gap</p>
+<figure>
+<img src="https://s2.loli.net/2023/02/03/IpfRycHsMBmSea3.png" alt="image-20230203172331516" /><figcaption aria-hidden="true">image-20230203172331516</figcaption>
+</figure>
+<blockquote>
+<p>定理：任何度量空间可以嵌入到<span class="math inline">\(l_1\)</span>空间中，distortion是<span class="math inline">\(O(\log n)\)</span>量级，并且计算<span class="math inline">\(f:V\to \R^m\)</span>是多项式时间的函数只要<span class="math inline">\(m= O(\log^2n)\)</span></p>
+<figure>
+<img src="https://s2.loli.net/2023/02/19/1GNbCatcX49ISPw.png" alt="image-20230203172454896" /><figcaption aria-hidden="true">image-20230203172454896</figcaption>
+</figure>
+<p>换成人话，对于<span class="math inline">\(G =(V,E)|V|=n\)</span>，可以找一个distortion <span class="math inline">\(\alpha = o(\log n)\)</span>的<span class="math inline">\(l_1\)</span> embedding function <span class="math inline">\(f\)</span>，并且<span class="math inline">\(m = O(\log ^2n)\)</span>，并且<span class="math inline">\(f(x)\)</span>计算是在多项式时间内可完成的</p>
+</blockquote>
+<h2 id="uniform-sparest-cut">Uniform Sparest Cut</h2>
+<h3 id="problem">problem</h3>
+<figure>
+<img src="https://s2.loli.net/2023/02/03/1PJrm4LxhgyOeYo.png" alt="image-20230203165146187" /><figcaption aria-hidden="true">image-20230203165146187</figcaption>
+</figure>
+<p>定义Sparsity of Graph <span class="math display">\[
+\rho(S )=\frac{\delta (S)}{|S||V-S|}
+\]</span> <span class="math inline">\(\delta(S)\)</span>计算<span class="math inline">\(S,V-S\)</span>之间的边数，要求Sparsity尽量小</p>
+<h3 id="引理metric-embedding线性组合构成距离空间">引理：Metric embedding线性组合构成距离空间</h3>
+<p>图G的metric embedding的分解</p>
+<figure>
+<img src="https://s2.loli.net/2023/02/03/FrpSKIUYuinWMjN.png" alt="image-20230203171924088" /><figcaption aria-hidden="true">image-20230203171924088</figcaption>
+</figure>
+<p>距离函数<span class="math inline">\(\parallel f(u)- f(v)\parallel_1\)</span>可以拆分成不同G的cut indictor function和固定系数<span class="math inline">\(\lambda_S\)</span>内积，m是嵌入空间维度，n是vertex number，至多有<span class="math inline">\(mn\)</span>个<span class="math inline">\(\lambda_S\)</span>是0</p>
+<h3 id="linear-program-for-sparest-cut-problem">Linear Program for Sparest Cut Problem</h3>
+<p>写成整数线性规划形式</p>
+<figure>
+<img src="https://s2.loli.net/2023/02/05/csEJadeyHYFkztr.png" alt="image-20230205104721568" /><figcaption aria-hidden="true">image-20230205104721568</figcaption>
+</figure>
+<h4 id="variable-and-constrain">Variable and constrain</h4>
+<ol type="1">
+<li><span class="math inline">\(x_e\)</span>每一个edge的指示变量，<span class="math inline">\(x_e=1\)</span>表明e是S和V-S之间的edge</li>
+<li><span class="math inline">\(y_{ij}=1\)</span>表明对于节点i和节点j，必然满足<span class="math inline">\(i\in S\and j \in V-S\)</span>或<span class="math inline">\(i\in V-S\and j\in S\)</span>，对<span class="math inline">\(i,j\)</span>求和得到<span class="math inline">\(|V-S||S|\)</span></li>
+<li><span class="math inline">\(P_{ij}\)</span>表明i,j之间的所有path，<span class="math inline">\(\sum_{e\in P} x_e \geq y_{ij}\)</span>表明，如果i,j不同时属于S或V-S，则必然至少存在一条跨S,V-S的边</li>
+</ol>
+<h4 id="relaxation形式">Relaxation形式</h4>
+<figure>
+<img src="https://s2.loli.net/2023/02/05/txWY7Ef81PyNCZg.png" alt="image-20230205105258114" /><figcaption aria-hidden="true">image-20230205105258114</figcaption>
+</figure>
+<p>注意LP问题的复杂度是G大小的指数量级(路径数量)，不能用常规的方法求解，这里用到ellipsoid method</p>
+<blockquote>
+<p>为什么约束<span class="math inline">\(\sum_{i,j}y_{ij}=1\)</span></p>
+</blockquote>
+<h4 id="algorithm-for-sparest-cut">Algorithm for Sparest Cut</h4>
+<ol type="1">
+<li><p>求解LP relaxation <span class="math inline">\((x^*,y^*),x^*\in \R^{|E|}\)</span>，<span class="math inline">\(x_e\)</span>是edge e的权重</p></li>
+<li><p>定义<span class="math inline">\(d_x(u,j)\)</span>是<span class="math inline">\(i,j\)</span>在图中的最短路径</p></li>
+<li><p>得到embedding function，获取metric embedding with distortion <span class="math inline">\(\alpha = O(\log n)\)</span>，使得<span class="math inline">\(f:V\to R^{O(\log ^2 n)}\)</span>，满足 <span class="math display">\[
+r d_x (u,v) \leq \parallel f(u)- f(v)\parallel_1\leq r\alpha d_x(u,v),\alpha = O(\log n)
+\]</span></p></li>
+<li></li>
+<li><p>在多项式时间内找到最多<span class="math inline">\(n\log ^2 n\)</span>个non-zero <span class="math inline">\(\lambda_S\)</span>使得距离可以写成<span class="math inline">\(\lambda_S\)</span>和示性函数线性组合的形式 <span class="math display">\[
+\parallel f(u) - f(v)\parallel_1 = \sum_{S\subseteq V} \lambda_S \chi_{\delta(S) }(u,v)
+\]</span></p></li>
+<li></li>
+<li><p>输出Sparest Cut <span class="math inline">\(S^*\)</span>，满足<span class="math inline">\(S = \{v|\lambda_S&gt;0,\rho(S)\ is \ \min \},\rho(S^*) =\min _{S:\lambda(S)&gt;0}\rho(S) =\min_{S,\lambda_S&gt;0}\frac{\delta (S)}{|S||V-S|}\)</span></p></li>
+</ol>
+<blockquote>
+<p>这里用到了两个定理</p>
+<ol type="1">
+<li><code>Theorem 1</code>在n个顶点的图中得到带有distortion <span class="math inline">\(\alpha =O(\log n)\)</span> metric embedding并且embedding dim <span class="math inline">\(m = O(\log^2 n)\)</span>，embedding function大概率可以在多项式时间内完成</li>
+<li><code>Lemma 1</code>表明<span class="math inline">\((V,d)\)</span>上的<span class="math inline">\(l_1-\)</span>embeddable metric和associated embedding <span class="math inline">\(f:V\to \R^m\)</span>可以拆分成<span class="math inline">\(\parallel f(u) - f(v)\parallel_1 = \sum_{S\subseteq V}\lambda_S \chi_{\delta(S)}(u,v)\)</span></li>
+</ol>
+</blockquote>
+<h3 id="performance-of-sparest-cut">Performance of Sparest Cut</h3>
+<p>randomized <span class="math inline">\(O(\log n)-\)</span>approximation algorithm</p>
+<blockquote>
+<p>Proof：<span class="math inline">\(\delta (S) = \sum_{e\in E}\chi_{\delta(S)}(e),|S||V- S| = \sum_{i,j}\chi_{\delta(S)}(i,j)\)</span></p>
+<blockquote>
+<p><span class="math display">\[
+\chi_{\delta (S)}(u,v)
+\]</span></p>
+<p>是indicator function，当<span class="math inline">\(u,v\)</span>跨<span class="math inline">\(S,V-S\)</span>时取1</p>
+</blockquote>
+<p>知道有<span class="math inline">\(\forall a_i,b_i&gt;0\)</span>，则 <span class="math display">\[
+\min_{1\leq i \leq k} \frac{a_i}{b_i}\leq \frac{\sum_{i=1}^k a_i}{\sum_{i=1}^k b_i}\label{inequal}
+\]</span> 拆分<span class="math inline">\(\rho(S^*)\)</span> <span class="math display">\[
+\begin{align}
+\rho(S^*) &amp;= \min_{S,\lambda_S&gt;0}\frac{\delta(S)}{|S||V-S|}\\
+&amp;=\min_{S,\lambda_S&gt;0}\frac{\sum_{e\in E}\chi_{\delta(S)}(e)}{\sum_{i,j}\chi_{\delta(S)}(i,j)}\\
+&amp;\leq \frac{\sum_{S\subseteq V}\lambda_S \sum_{e\in E}\chi_{\delta(S)}(e)}{\sum_{S\subseteq V}\lambda _S \sum_{i,j}\chi_{\delta (S)}(i,j)}\\
+&amp;=\frac{\sum_{e\in E}\sum_{S\subseteq V}\lambda_S \chi_{\delta(S)}(e)}{\sum_{i,j}\sum_{S\subseteq V}\lambda_S \chi_{\delta(S)}(i,j)}\\
+&amp;=\frac{\sum_{e=(u,v) \in E}\parallel f(u)-f(v)\parallel_1}{\sum_{i,j} \parallel f(i) - f(j)\parallel_1}\\
+&amp;\leq \frac{r\cdot O(\log n) \sum_{e= (u,v)\in E}d_x(u,v)}{r\cdot \sum_{i,j}d_x(i,j)}
+\end{align}
+\]</span></p>
+<ol type="1">
+<li>(6)来自<span class="math inline">\(\ref{inequal}\)</span></li>
+<li>(9)来自求和号更换顺序</li>
+<li>(10)来自Lemma 1</li>
+<li>(11)来自<span class="math inline">\(\parallel f(u) - f(v)\parallel_1\leq r O(\log n) d_x(u,v)\)</span></li>
+</ol>
+<p>进一步写出 <span class="math display">\[
+\begin{align}
+\rho(S^*) &amp;=O(\log n)\frac{\sum_{e=(u,v)\in E}d_x(u,v)}{\sum_{i,j}d_x(i,j)}\\
+&amp;\leq O(\log n)\frac{\sum_{e\in E}x_e}{\sum_{i,j} y_{ij}}\\
+&amp;=O(\log n)\sum_{e\in E} x_e\\
+&amp;\leq O(\log n)OPT_{LP}\leq O(\log n) OPT
+\end{align}
+\]</span></p>
+<ol type="1">
+<li>(13)来自<span class="math inline">\(x_e\geq d_x(u,v),(u,v)\in E\)</span>，并且LP constrain <span class="math inline">\(y_{ij}\leq d_x(i,j)\)</span></li>
+</ol>
+<blockquote>
+<p><span class="math inline">\(x_e\geq d_x(u,v)\)</span>是因为<span class="math inline">\(x_e\)</span>是边权并且<span class="math inline">\(d_x\)</span>定义为shortest path</p>
+</blockquote>
+<ol type="1">
+<li><span class="math inline">\(14\)</span>来自约束<span class="math inline">\(\sum_{i,j} y_{ij}=1\)</span></li>
+<li>最后用到了<span class="math inline">\(OPT_{LP}\leq OPT\)</span></li>
+</ol>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/02/19/Approximation-Algorithm-Sparest-Cut/" data-id="cleatew0d0000bk8wd9wadbac" data-title="Approximation Algorithm Sparest Cut" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Algorithm-design-and-Analysis-Approximation-Algorithm/" rel="tag">Algorithm design and Analysis, Approximation Algorithm</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-Approximation-Algorithm-TSP-Max-2-SAT" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/02/19/Approximation-Algorithm-TSP-Max-2-SAT/" class="article-date">
+  <time class="dt-published" datetime="2023-02-19T03:09:23.000Z" itemprop="datePublished">2023-02-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2023/02/19/Approximation-Algorithm-TSP-Max-2-SAT/">Approximation Algorithm TSP Max 2-SAT</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="approximation-algorithmtspmax-2-sat-and-k-center">Approximation Algorithm(TSP,Max 2-SAT and k-center)</h1>
+<h2 id="tsp">TSP</h2>
+<h3 id="problem">Problem</h3>
+<p>无向带权图中，寻找环路遍历每个顶点，使得距离最小，权重<span class="math inline">\(w(u,v)\)</span>满足 <span class="math display">\[
+w(u,v)\leq w(u,x)+w(x,v)
+\]</span></p>
+<h3 id="algorithmfindtour">algorithm(FINDTOUR)</h3>
+<ol type="1">
+<li>找到graph的一个最小生成树T</li>
+<li>在T上重复每个边两次，得到H</li>
+<li>在H上找到一条Eulerian回路C</li>
+<li>构建TSP，如果C上遍历一个vertex两次，则跳过这个vertex直接visit下一个vertex</li>
+</ol>
+<h4 id="approximation-algorithm">2-Approximation algorithm</h4>
+<p><span class="math inline">\(C^*\)</span>是optimal tour的开销，必然有 <span class="math display">\[
+MST\leq C^*
+\]</span> 这是因为<span class="math inline">\(C^*\)</span>移除一条边必然构成G的生成树，因此 <span class="math display">\[
+Cost(Eulerian\ tour)\leq 2C^*\\
+Cost(final\ output)\leq 2C^*
+\]</span></p>
+<h3 id="approximation-algorithm-of-tsp">1.5 approximation algorithm of TSP</h3>
+<h4 id="algorithm">Algorithm</h4>
+<ol type="1">
+<li>获得MST T</li>
+<li>在MST的偶数度数顶点中计算最小代价完全匹配M，将M加入到T中获得欧拉图H</li>
+<li>在H上获得欧拉回路C</li>
+<li>基于FINDTOUR相同的算法从C构建出一条欧拉回路</li>
+</ol>
+<h4 id="引理偶数顶点minimum-cost-perfect-matching的代价">引理：偶数顶点minimum cost perfect matching的代价</h4>
+<p>设<span class="math inline">\(V^\prime\subseteq V,|V^\prime|\)</span>为偶数，M是<span class="math inline">\(V^\prime\)</span>上的minimum cost perfect matching，则确定M cost上界 <span class="math display">\[
+cost(M)\leq \frac{C^*}{2}
+\]</span></p>
+<blockquote>
+<p>proof，在一个cost为<span class="math inline">\(C^*\)</span>的最优TSP tour <span class="math inline">\(T^\prime\)</span>上去掉<span class="math inline">\(V-V^\prime\)</span>(做shortcut，和FINDTOUR相同)得到新的在<span class="math inline">\(V^\prime\)</span>上的回路<span class="math inline">\(T\)</span>，必然有 $$ cost(T)cost(T^) = C^*</p>
+</blockquote>
+<blockquote>
+<p><span class="math display">\[
+考虑$V^\prime$组成的环路，记作
+\]</span> v_1,v_2,,v_{2k},v_1 <span class="math display">\[
+则取一个match
+\]</span> (v_1,v_2),(v_3,v_4),,(v_{2k-1},v_{2k}) <span class="math display">\[
+WLOG，假设这个match M的cost满足
+\]</span> 2 cost(M)cost(T^) = C^* $$ &gt; 如果不成立，则<span class="math inline">\((v_2,v_3),(v_4,v_5),\cdots,(v_{2k},v_1)\)</span>的cost必然<span class="math inline">\(\leq \frac{C^*}{2}\)</span></p>
+<p>基于上述讨论，有 <span class="math display">\[
+cost(M+MST)\leq \frac{3}{2}C^*
+\]</span> Q.E.D</p>
+</blockquote>
+<h2 id="max-2-sat">MAX 2-SAT</h2>
+<h3 id="problem-1">Problem</h3>
+<p>给定n个bool变量<span class="math inline">\(x_1,x_2,\cdots,x_n\)</span>和m个合取范式<span class="math inline">\(C_1,C_2,\cdots,C_m\)</span></p>
+<blockquote>
+<p>每个clause是两个子句<span class="math inline">\(t_1,t_2\)</span>的或，子句采样自<span class="math inline">\(x_1,x_2,\cdots,x_n,\not {x_1},\not x_2,\cdots,\not x_n\)</span></p>
+</blockquote>
+<p>找到变量赋值使得被满足的合取范式最多</p>
+<h3 id="randomassign">RANDOMASSIGN</h3>
+<p>随机给变量赋值，是<span class="math inline">\(\frac{3}{4}\)</span>近似最优算法，对于每个子句<span class="math inline">\(Y_i\)</span> <span class="math display">\[
+Pr(Y_i=1) = 1-Pr(Y_i = 0) = \frac{3}{4}
+\]</span> 所有子句 <span class="math display">\[
+E[Y] = \sum_{i=1}^m E[Y_i] = \frac{3}{4}m\geq \frac 3 4 OPT
+\]</span></p>
+<h2 id="complex-theory">Complex Theory</h2>
+<h3 id="可解决问题">可解决问题</h3>
+<p>定义：P为所有在多项式时间内可以解决的问题集合</p>
+<h3 id="多项式规约">多项式规约</h3>
+<p>可以在多项式时间内将问题X转化为问题Y，指的是存在一个多项式算法，可以将每个X的实例x通过算法<span class="math inline">\(\mathcal A\)</span>在多项式事件内转化为Y中的instance y，并满足</p>
+<figure>
+<img src="https://s2.loli.net/2023/02/09/J3vrqXAfKgZhVLn.png" alt="image-20230209163631473" /><figcaption aria-hidden="true">image-20230209163631473</figcaption>
+</figure>
+<p>若 <span class="math display">\[
+X\leq_P Y
+\]</span></p>
+<ol type="1">
+<li>Y存在多项式算法则X必然存在多项式算法</li>
+<li>X不存在多项式算法则Y必然不存在多项式算法</li>
+</ol>
+<p>X可以在多项式时间内规约成Y</p>
+<h3 id="p类问题np问题和pnp">P类问题，NP问题和P=NP</h3>
+<ol type="1">
+<li>P类问题：一个可以在多项式时间内找到solution的问题</li>
+<li>NP问题：可以在多项式时间内验证一个解(多项式时间内猜出一个解)</li>
+</ol>
+<blockquote>
+<ol type="1">
+<li>在一个图中找出Hamilton回路(NP问题)</li>
+<li>是否存在Hamilton回路(不是NP问题)</li>
+</ol>
+<p>所有P问题都是NP问题，必然有<span class="math inline">\(P\subseteq NP\)</span></p>
+</blockquote>
+<h3 id="npc问题">NPC问题</h3>
+<blockquote>
+<p>Hamiton问题在一个非完全图上找回路，TSP是在完全带权图上找回图，Hamition转化为TSP则是在带权图(真正在G中相邻权重为0，否则为1)是否存在权重为0的葫芦</p>
+</blockquote>
+<p>问题多项式约化<span class="math inline">\(X\leq_{P} Y\)</span>表明问题Y的难度一定不会超过X，NPC问题解决的是，是否存在一类问题，使得所有的NP问题都可以约化为它，如果解决这类问题则所有NP问题都可以解决，一个NPC问题需要满足如下条件</p>
+<ol type="1">
+<li>是一个NP问题<span class="math inline">\(NPC\subseteq NP\)</span></li>
+<li>一个已知的NPC问题可以归约到它</li>
+</ol>
+<blockquote>
+<p>如何找到<strong>第一个</strong>NPC问题？</p>
+</blockquote>
+<h3 id="nphard问题">NPHard问题</h3>
+<p>满足第二条但是不满足第一条</p>
+<h3 id="第一个npc问题逻辑电路">第一个NPC问题：逻辑电路</h3>
+<p>给定逻辑电路，是否存在一种输入使得输出为True</p>
+<blockquote>
+<p>任何一个NPC问题可以归约到此</p>
+</blockquote>
+<blockquote>
+<p>An example of Reduction <span class="math inline">\(IS=_P VC\)</span></p>
+<p><code>Independent Set</code> and <code>Vertex Cover</code>，前者描述G中存在最多多少点两两不相交(是否存在大小不少于为k的Independent Set?)，后者描述的是最小需要多少点可以使得每个边至少被一个顶点关联(是否存在大小不超过k的vertex cover)，只需要证明</p>
+<ol type="1">
+<li>如果X是一个vertex cover，则<span class="math inline">\(V-X\)</span>是一个独立集合</li>
+<li>如果X是一个Independent set，则<span class="math inline">\(V-X\)</span>是一个vertex cover</li>
+</ol>
+<p>Another example of Reduction <span class="math inline">\(VC\leq SC(Set\ Cover)\)</span></p>
+<p>Set Cover描述的是对于一个全集U和它的若干子集<span class="math inline">\(S_1,S_2,\cdots,S_m\)</span>，是否存在不多于k个子集使得它们的并等于U？Vertex Cover的一个instance记作<span class="math inline">\((G,k)\)</span>，一个Vertex Cover的Set Cover instance包括</p>
+<p>图的每个边映射为全集U中的一个元素，每个顶点映射为一个subset，它的元素是它关联的边</p>
+</blockquote>
+<h3 id="可满足和3-可满足">可满足和3-可满足</h3>
+<ol type="1">
+<li>可满足：逻辑电路(一个Conjunctive Normal Form的布尔函数是否是可满足的，Conjuctive Normal Form写成若干子句的且，每个子句是literal的或操作)</li>
+<li>3-可满足，每个子句仅包括3个literal的或操作</li>
+</ol>
+<p>定理 <span class="math display">\[
+3-SAT\leq_P IS
+\]</span> 3-满足问题经过多项式事件可以规约为最大独立集 <span class="math display">\[
+包含n个变量，m个clauses的3-SAT问题\\{\Rightarrow}是否可满足^{P规约}构造一个图，包含3m个节点，是否存在大小为m的独立集合
+\]</span></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/02/19/Approximation-Algorithm-TSP-Max-2-SAT/" data-id="cleatew0n0005bk8w3299ai68" data-title="Approximation Algorithm TSP Max 2-SAT" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Algorithm-design-and-Analysis-Approximation-Algorithm/" rel="tag">Algorithm design and Analysis, Approximation Algorithm</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-Approximation-Algorithm-Maxcut-and-Correlation-Cluster" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/02/19/Approximation-Algorithm-Maxcut-and-Correlation-Cluster/" class="article-date">
+  <time class="dt-published" datetime="2023-02-19T03:07:34.000Z" itemprop="datePublished">2023-02-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2023/02/19/Approximation-Algorithm-Maxcut-and-Correlation-Cluster/">Approximation Algorithm Maxcut and Correlation Cluster</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="algorithm-review-approximation-algorithm-part5max-cut-and-correlation-clustering">Algorithm review Approximation Algorithm Part5(Max cut and correlation clustering)</h1>
+<h2 id="approximation-rate">Approximation rate</h2>
+<p>主要有两种对Approximation Rate的讨论</p>
+<h3 id="approximation-in-expectation">Approximation in expectation</h3>
+<p><span class="math display">\[
+E[\frac{Alg}{OPT}] \leq(\geq) \alpha
+\]</span></p>
+<p>对于同一个问题，Alg运行的结果带有随机性，结果的期望和最优解之比被bound</p>
+<h3 id="approximation-with-high-probability">Approximation with high probability</h3>
+<p>从概率角度，算法输出和真实值之比被<span class="math inline">\(\alpha\)</span>约束的概率很大 <span class="math display">\[
+Pr[\frac{Alg}{OPT}\leq(\geq)\alpha]&gt;1-\alpha
+\]</span></p>
+<h3 id="approximation-in-expected-running-time">Approximation in expected running time</h3>
+<p>始终满足 <span class="math display">\[
+\frac{Alg}{OPT}\leq (\geq )\alpha
+\]</span> 但是Alg运行时间可能极差</p>
+<h2 id="max-cut">Max Cut</h2>
+<p>给定无向带权图<span class="math inline">\(G=(V,E,w),w_{ij}\geq 0\)</span>，希望找到顶点划分<span class="math inline">\(S,V-E\)</span>，使得cut权重尽量大</p>
+<h3 id="semidefinite-programming">Semidefinite Programming</h3>
+<p>给定<span class="math inline">\(X\in \R^{n\times n}\)</span>的半正定对称矩阵，一定存在分解 <span class="math display">\[
+X=U^T U,U\in \R^{k\times n}
+\]</span> 两个等价定义，定义1 <span class="math display">\[
+\max \sum_{ij} w_{ij} x_{ij}\\
+s.t\quad \sum_{ij} a_{ij}^r x_{ij} \geq b_r,r\in I\\
+X\succeq 0
+\]</span> 定义2(基于矩阵分解) <span class="math display">\[
+\max \sum_{ij}w_{ij}\lang u_i,u_j\rang\\
+s.t\quad \sum_{ij} a_{ij}^r \lang u_i,u_j\rang \geq b_r,r\in I\\
+u_i\in \R^n
+\]</span></p>
+<h3 id="sdp-for-max-cut">SDP For Max Cut</h3>
+定义 $$ v_i ={
+<span class="math display">\[\begin{aligned}
+
+&amp; e,i\in S\\
+&amp; -e,i\notin S
+
+\end{aligned}\]</span>
+<p>. $$ e是一个0-1单位向量，<span class="math inline">\(|e| =|V|\)</span></p>
+<figure>
+<img src="https://s2.loli.net/2023/01/31/Av16GpfRhx3jOFu.png" alt="image-20230131173249369" /><figcaption aria-hidden="true">image-20230131173249369</figcaption>
+</figure>
+<h3 id="sdp-for-max-cut-1">SDP for Max Cut</h3>
+<ol type="1">
+<li>计算最优的Max cut <span class="math inline">\(v_i\)</span></li>
+<li>随机选择单位向量r
+<ol type="1">
+<li><span class="math inline">\(x_1,x_2,\cdots,x_n|\mathcal N(0,1)\)</span></li>
+<li><span class="math inline">\(r = \frac{1}{\sqrt{x_1^2+x_2^2+\cdots+x_n^2}}(x_1,x_2,\cdots,x_n)\)</span></li>
+</ol></li>
+<li><span class="math inline">\(S = \{i\in V|\lang r,v_i\rang \geq 0 \}\)</span></li>
+</ol>
+<h4 id="引理分割定理">引理：分割定理</h4>
+<blockquote>
+<p>单位球上任取两个向量<span class="math inline">\(v_i,v_j\)</span>，再任取一个单位向量<span class="math inline">\(r\)</span>，记事件A,B <span class="math display">\[
+A : \lang v_i,r\rang \geq 0\\
+B : \lang v_j,r\rang \geq 0
+\]</span> &gt; r在单位球上分割<span class="math inline">\(v_i,v_j\)</span></p>
+<p>考虑<span class="math inline">\(Pr(A\bigcap B)\)</span>，对于<span class="math inline">\(v_i,v_j\)</span>构成的圆，他们之间的夹角为 <span class="math display">\[
+\theta = \arccos (\lang v_i,v_j \rang)\\
+Pr(A\bigcap B) =\frac{2\theta}{2\pi}=\frac{1-\lang v_i,v_j\rang}{\pi}\frac{\arccos(\lang v_i,v_j\rang)}{1-\lang v_i,v_j\rang}
+\]</span> 令 <span class="math display">\[
+f(x) = \frac{\arccos x}{1-x},\frac{2}{\pi}\min _x f(x) = 0.878 
+\]</span> 因此 <span class="math display">\[
+Pr(A\bigcap B)\geq 0.878 \frac{1-\lang v_i,v_j \rang}{2}
+\]</span></p>
+</blockquote>
+<h4 id="定理算法最优性">定理：算法最优性</h4>
+<p>根据SDP-MAXCut求解的解记作<span class="math inline">\(OPT_{SDP}\)</span>，它与最优解的关系满足 <span class="math display">\[
+OPT_{SDP}\geq 0.878 OPT
+\]</span></p>
+<p>显然round后的最优解一定比Max-cut原问题更优，即 <span class="math display">\[
+\sum_{(i,j)\in E} \frac{1}{2}w_{ij}(1-\lang v_i^*,v_j^*\rang)\geq OPT
+\]</span> 实际转化为Max-cut后目标解写成 <span class="math display">\[
+\sum_{(i,j)\in E,\lang v_i^*,r\rang \times \lang v_j^*,r\rang \leq 0} \frac{1}{2}w_{ij}
+\]</span> <span class="math inline">\(\lang v_i^*,r\rang\times \lang v_j^*,r\rang \leq 0\)</span>表示<span class="math inline">\(i\in S\)</span>和<span class="math inline">\(j\in S\)</span>不同时成立，同时根据引理，对于任意两个顶点<span class="math inline">\(i,j\)</span>，他们同时属于<span class="math inline">\(S\)</span>的概率为 <span class="math display">\[
+Pr(i,j\in S=False) \geq 0.878 \frac{1-v_i^T v_j}{2}
+\]</span> 写成 <span class="math display">\[
+\sum_{(i,j)\in E}w_{ij} \frac{1-\lang v_i^*,v_j\rang}{2}\leq \frac{1}{0.878} \sum_{(i,j)\in }w_{ij}Pr(i,j\in S=False)=\frac{1}{0.878}E[alg]
+\]</span> 这个算法是<strong>期望上近似</strong>的Approximation Algorithm</p>
+<h2 id="correlation-clusterv1">Correlation cluster(v1)</h2>
+<h3 id="question">Question</h3>
+<p>给定<span class="math inline">\(G=(V,E)\)</span>，<span class="math inline">\(\forall e\in E\)</span>映射为<span class="math inline">\(e\to +\or -\)</span>，要求找到t个partition <span class="math inline">\(P=(P_1,P_2,\cdots,P_t)\)</span>，使得跨cluster之间的positive edges和cluster内的negative egdes之和最大</p>
+<h3 id="from-correlation-cluster-to-sdp">from correlation cluster to SDP</h3>
+<p>定义<code>sgn</code>函数 <span class="math display">\[
+\forall(i,j)\in E,sgn(ij) =\left\{
+\begin{aligned}
+&amp;1,(i,j)\to +\\
+&amp;-1,(i,j)\to -
+\end{aligned}
+\right.
+\]</span> 对于包含n个结点的图，定义$e_{k}{0,1}^n <span class="math inline">\(且\)</span>e_k$是单位向量(第k维为1，其余为0)</p>
+<blockquote>
+<p>这里讲义中是否存在问题，貌似<span class="math inline">\(e_k\in \{0,1\}^t\)</span>更加合理</p>
+</blockquote>
+<p>写成SDP <span class="math display">\[
+\max\sum_{i&lt;j,sgn(ij)=1}x_i^T x_j +\sum_{i&lt;j,sgn(ij)=-1}(1-x_i^Tx_j)\\
+s.t\quad x_i\in \{e_1,e_2,\cdots,e_n\},i\in V
+\]</span></p>
+<ol type="1">
+<li><span class="math inline">\(i&lt;j\)</span>是因为无向图</li>
+<li><span class="math inline">\(x_i\)</span>作为标志每个节点的indicate variable</li>
+</ol>
+<p>SDP relaxation形式，约束变成 <span class="math display">\[
+x_i^T x_i = 1,x_i^Tx_j\geq 0,x_i\in \R^n,i,j\in V
+\]</span></p>
+<h3 id="algorithm-sdp-cc">Algorithm: SDP-CC</h3>
+<p>随机选择两个单位球上的向量<span class="math inline">\(r_1,r_2\)</span>，将空间分成4个部分</p>
+<figure>
+<img src="https://s2.loli.net/2023/02/02/1wy8J7XkPLfCohg.png" alt="image-20230202165015295" /><figcaption aria-hidden="true">image-20230202165015295</figcaption>
+</figure>
+<p>对于<span class="math inline">\(\forall (i,j)\in E\)</span>，定义<span class="math inline">\(q_{ij}\)</span>为<span class="math inline">\(v_i,v_j\)</span>落在两个hyperplane同一侧的概率，显然 <span class="math display">\[
+q_{ij} = (1-\frac{\arccos v_i^T v_j}{\pi})^2\Leftrightarrow i\in R_1\bigcup R_4,j\in R_1\bigcup R_4
+\]</span> 加上平方项是因为有两个超平面，算法运行的期望为 <span class="math display">\[
+\sum_{i&lt;j,sgn(i,j)=1}q_{ij}+\sum_{i&lt;j,sgn(i,j)=-1}(1-q_{ij})
+\]</span> 显然有 <span class="math display">\[
+\alpha_1 = \min_z \frac{(1-\frac{\arccos(z)}{\pi})^2}{z},\alpha_2 =\min_z \frac{(1-(1-\frac{\arccos z}{\pi})^2)}{1-z},\alpha^*=\min{\alpha_1,\alpha_2}\geq 0.75
+\]</span> Round结果显然比之前更优，因此 <span class="math display">\[
+\sum_{i&lt;j,sgn(ij)=1}v_i^* v_j +\sum_{i&lt;j,sgn(ij)=-1} (1-v_i^*v_j)\geq OPT
+\]</span> 得到算法是0.75近似</p>
+<h2 id="correlation-clusteringv2">Correlation clustering(v2)</h2>
+<h3 id="problem">Problem</h3>
+<p>希望disagreement of G最小，disagreement定义为</p>
+<blockquote>
+<p>节点聚类<span class="math inline">\(P=(P_1,P_2,\cdots,P_t)\)</span>中聚类内部的negative edges和聚类之间的positive edges之和</p>
+</blockquote>
+<h3 id="algorithm-pivot-cc">Algorithm: PIVOT-CC</h3>
+<figure>
+<img src="https://s2.loli.net/2023/02/02/G9Z42oMhJUnxIqm.png" alt="image-20230202174334789" /><figcaption aria-hidden="true">image-20230202174334789</figcaption>
+</figure>
+<p>不断去除节点的positive neighbor</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/02/19/Approximation-Algorithm-Maxcut-and-Correlation-Cluster/" data-id="cleatew0j0001bk8w7k6nhjoz" data-title="Approximation Algorithm Maxcut and Correlation Cluster" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Algorithm-design-and-Analysis-Approximation-Algorithm/" rel="tag">Algorithm design and Analysis, Approximation Algorithm</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-hardness-of-approximation" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/02/19/hardness-of-approximation/" class="article-date">
+  <time class="dt-published" datetime="2023-02-19T03:04:01.000Z" itemprop="datePublished">2023-02-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2023/02/19/hardness-of-approximation/">hardness of approximation</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="approximation-algorithmhardness-of-approximation">Approximation Algorithm(Hardness of Approximation)</h1>
+<h2 id="hardness-of-approximation">Hardness of Approximation</h2>
+<p>近似算法复杂度仍然太高</p>
+<h3 id="gap-reduction">gap reduction</h3>
+<p>定义NP到P的<span class="math inline">\((f,c_1,c_2)\)</span> gap reduction，将问题L映射为问题<span class="math inline">\(\Pi\)</span>(最小化问题)</p>
+<blockquote>
+<p>L是NPC判定问题，<span class="math inline">\(\Pi\)</span>是NPH最小化问题，从NPC问题构造最优化问题，NPC问题只有Yes instance和No instance</p>
+</blockquote>
+<ol type="1">
+<li>f是problem instance之间的映射(规约)</li>
+<li><span class="math inline">\(c_1,c_2\)</span>是<span class="math inline">\(N\to Q^+\)</span>的映射函数(复杂性，最优性)</li>
+<li><span class="math inline">\(f,c_1,c_2\)</span>都是多项式复杂性函数</li>
+<li><span class="math inline">\(x\in L,OPT(f(x))\leq c_1 |f(x)|\)</span>（输入是Yes instance，<span class="math inline">\(|f(x)|\)</span>表示reduction大小）</li>
+<li><span class="math inline">\(x\notin L,OPT(f(x))&gt; c_2 |f(x)|\)</span>（输入时No instance，OPT不可能太小）</li>
+</ol>
+<blockquote>
+<p>假设最优化问题<span class="math inline">\(\Pi\)</span>存在近似比为<span class="math inline">\(\frac{c_2}{c_1}\)</span>的近似比算法<span class="math inline">\(\mathcal {A}\)</span>，对于每个L的实例<span class="math inline">\(l\in L\)</span>，构造出<span class="math inline">\(\Pi\)</span>中的实例<span class="math inline">\(I^\prime\)</span>，两种情况 $$ OPT(I^)c_1 |I<sup>|A(I</sup>)OPT(I^)c_2 |I^|IL(Yes instance)\ OPT(I^)c_2 |I<sup>|A(I</sup>)c_2 |I^|IL(No instance)</p>
+</blockquote>
+<blockquote>
+<p>$$ 则NPC被解决<span class="math inline">\(\mathcal A+reduction\)</span>，这和假设<span class="math inline">\(NP\neq P\)</span>矛盾，因此在<span class="math inline">\(NP\neq P\)</span>假设下，不存在<span class="math inline">\(\frac{c_2}{c_1}\)</span>近似算法</p>
+</blockquote>
+<p>Hardness of Approximation实际上描述了不同近似问题具有的近似比的性质，显然常数近似，指数近似，对数近似不是一类问题</p>
+<h2 id="k-center-problem">K-center problem</h2>
+<h3 id="problem">Problem</h3>
+<p>无向完全图<span class="math inline">\(G=(V,E)\)</span>，定义边权<span class="math inline">\(d_{ij}\)</span>满足距离性质<span class="math inline">\(d_{ij}\leq d_{ik}+ d_{kj}\)</span></p>
+<blockquote>
+<p>找到大小为k的子集S，使得cost of S最小，cost定义为 <span class="math display">\[
+cost(S) = \max_{v\in V}  \min_{s\in S} d_{is}
+\]</span> 定义为每个点到S距离的最大值</p>
+</blockquote>
+<p>已知存在2-approximation算法（<code>GREADYCENTER</code>，每次寻找距离S最大的节点加入S），证明<code>P=NP</code>假设下的一个推论</p>
+<h3 id="定理假设pneq-np则对forall-epsilon-0k-center不存在2-epsilon近似算法">定理：假设<span class="math inline">\(P\neq NP\)</span>，则对<span class="math inline">\(\forall \epsilon &gt;0\)</span>，k-center不存在<span class="math inline">\((2-\epsilon)\)</span>近似算法</h3>
+<h4 id="定义dspnpcdominated-set">定义DSP(NPC,dominated set)</h4>
+<blockquote>
+<p>NPH不一定能在多项式时间内验证解的正确性，因此不一定属于NP，和NPC不同，后者一定是NP的子集</p>
+</blockquote>
+<figure>
+<img src="https://s2.loli.net/2023/02/16/nHMbhZRf7CYKUoG.png" alt="image-20230216154813881" /><figcaption aria-hidden="true">image-20230216154813881</figcaption>
+</figure>
+<blockquote>
+<p>注意这里的规约方向是<span class="math inline">\(DSP\to k-center\)</span>，只要解决k-center就一定能解决DSP</p>
+</blockquote>
+<p>所有节点要么在S中要么在S的相邻节点中，给定一个DSP的instance <span class="math inline">\(\lang G=(V,E),k\rang\)</span>，构造对应的k-center problem实例 <span class="math inline">\(\lang G = (V,E^\prime),d_{ij},k\rang\)</span></p>
+<blockquote>
+<p><span class="math inline">\((i,j)\in E\to d_{ij }=1\)</span>否则<span class="math inline">\(d_{ij}=2\)</span></p>
+</blockquote>
+<p>Dominate Set S存在$$Optimal radius of k-center problem H is 1</p>
+<blockquote>
+<p>存在S，则V-S的任何节点均和S相邻，<span class="math inline">\(\forall v\in V-S ,d_{v S} = 1\)</span>(权重定义)</p>
+</blockquote>
+<p>不存在<span class="math inline">\((2-\epsilon)\)</span>近似，因为任何近似算法输出为1或2</p>
+<blockquote>
+<p>考虑带权完全图，边权<span class="math inline">\(w\in \{1,2\}\)</span>，求大小为S的点子集，使得 <span class="math display">\[
+cost(S) =\max_{v\in V} d_{vS}
+\]</span> 最小。显然，<span class="math inline">\(\forall v\in V-S ,d_{vS} = 1/2\)</span>，假设DSP的回答是yes，则必然有<span class="math inline">\(cost(S) = 1\)</span>。如果存在<span class="math inline">\((2-\epsilon)\)</span>近似，则求出的近似解<span class="math inline">\(S^*\)</span>满足 <span class="math display">\[
+\frac{cost(S^*)}{cost(S)}\leq 2-\epsilon
+\]</span> 则<span class="math inline">\(cost(S^*)=1\)</span>，即求解<span class="math inline">\(DSP\)</span> reduction问题，通过最优解可以判断原问题解是否存在（如果<span class="math inline">\(cost(S^*)=1\)</span>则存在DSP集合S，否则不存在）并且求出的集合<span class="math inline">\(S^*\)</span>就是DSP的解(可以在多项式时间内判断输入<span class="math inline">\(S\)</span>时DSP是否回答Yes)，这和NPH矛盾</p>
+</blockquote>
+<p><span class="math display">\[
+c_1(n)=1,c_2(n)=2-\epsilon
+\]</span></p>
+<p>这是因为必然有 <span class="math display">\[
+cost(DSP)\leq cost(f(DSP))
+\]</span></p>
+<h2 id="bin-packing-problem">Bin Packing Problem</h2>
+<h3 id="problem-1">Problem</h3>
+<p>给定包含n个item的集合，每个item <span class="math inline">\(o_i\)</span>具有size <span class="math inline">\(s_i\in(0,1]\)</span>，定义包含n个bins的集合B，每个bin的容量是1</p>
+<blockquote>
+<p>将item放到不同bins中，满足</p>
+<ol type="1">
+<li>每个bins能承载所属的item</li>
+<li>使用尽量少的bins(即将多个item尽量放在一个bin中)，一个bin放一个item一定放得下，但是太浪费了</li>
+</ol>
+<blockquote>
+<p>找到item到bin的映射</p>
+</blockquote>
+</blockquote>
+<h3 id="firstfit">FIRSTFIT</h3>
+<ol type="1">
+<li>按照顺序依次放置item，放不下则转移到下一个bin</li>
+<li>下一个item来也需要从第一个bin开始遍历，找到能放下的bin</li>
+</ol>
+<h4 id="近似算法">2-近似算法</h4>
+<blockquote>
+<p>假设<code>FIRSTFIT</code>需要m个bins，则至少m-1个bins花了至少一半的capacity装items（不可能有两个都没装到一半，否则可以合并为1个），定义这些bin为good bins。最优解OPT必然有 <span class="math display">\[
+OPT\geq \sum_{i=1}^n s_i
+\]</span> 必然有 <span class="math display">\[
+\sum_{i=1}^n s_i \geq \sum_{i\to good\ bins} s_i&gt;\frac{m-1}{2}
+\]</span> 得证，关键使用<span class="math inline">\(\sum s_i\)</span>作为桥梁沟通最优解和近似解</p>
+</blockquote>
+<h3 id="定理如果pneq-np对于bin-packing-problem不存在frac32-epsilon近似算法">定理：如果<span class="math inline">\(P\neq NP\)</span>，对于bin packing problem不存在<span class="math inline">\(\frac{3}{2}-\epsilon\)</span>近似算法</h3>
+<h4 id="partition-problem">Partition Problem</h4>
+<p>给定一个包含n个数的set，<span class="math inline">\(c_i\)</span>是整数</p>
+<blockquote>
+<p>是否存在1-n的下标子集S <span class="math inline">\(S\in \{1,2,\cdots,n\}\)</span>，使得 <span class="math display">\[
+\sum_{i\in S} c_i = \sum_{i\neq S} c_i
+\]</span> 假设每个数不会超过总和的一半，不然问题显然是No</p>
+</blockquote>
+<h4 id="reduction-partitionto-bin-packing">Reduction <span class="math inline">\(Partition\to Bin \ Packing\)</span></h4>
+<p>对于包含n个数的partition instance <span class="math inline">\(I=(c_1,c_2,\cdots,c_n)\)</span>，定义它reduction生成的Bin Packing instance <span class="math inline">\(I^\prime\)</span>:item <span class="math inline">\(o_i,s_i=\frac{2c_i}{C}\)</span>，给定问题能否将Bin Packing问题放在两个bins中</p>
+<ol type="1">
+<li>假设S是partition instance <span class="math inline">\(I\)</span>，则可以将<span class="math inline">\(I^\prime\)</span>放置到两个bins</li>
+<li><span class="math inline">\(I\)</span>如果无解则<span class="math inline">\(I^\prime\)</span>至少需要3个bins</li>
+</ol>
+<blockquote>
+<p>同样，逻辑上是 <span class="math display">\[
+存在\frac{3}{2}-\epsilon近似\to 可以在多项式时间内解决Partition问题
+\]</span></p>
+<ol type="1">
+<li>如果<span class="math inline">\(I\)</span>是一个Yes instance，近似解满足<span class="math inline">\((\frac{3}{2} -\epsilon)\cdot 2 &lt; 3\)</span>，必然得到2 bins</li>
+<li>如果<span class="math inline">\(\frac{3}{2}-\epsilon\)</span>算法解出至少要放在3 bins，则<span class="math inline">\(I\to No\)</span></li>
+</ol>
+<p>因为partition是一个NPH问题，这和<span class="math inline">\(P\neq NP\)</span>假设矛盾</p>
+</blockquote>
+<blockquote>
+<p>这两个例子都告诉我们，<span class="math inline">\(NP\neq P\)</span>假设下，2近似或<span class="math inline">\(\frac{3}{2}\)</span>近似已经是最好的近似算法。证明思路类似，都是从一个NPC问题判断规约到当前最优化近似问题</p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/02/19/hardness-of-approximation/" data-id="cleatew0r000abk8w5fi24ttq" data-title="hardness of approximation" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Algorithm-design-and-Analysis-Approximation-Algorithm/" rel="tag">Algorithm design and Analysis, Approximation Algorithm</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-Dirichletprocess1" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2023/02/17/Dirichletprocess1/" class="article-date">
@@ -284,7 +952,7 @@ Var[x_i]=\frac{\alpha_i(\sum_k \alpha_k - \alpha_i)}{(\sum_k \alpha_i)^2(\sum_k 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2023/02/17/Dirichletprocess1/" data-id="cle9mgcub0004s48w3abi11b2" data-title="Dirichletprocess1" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2023/02/17/Dirichletprocess1/" data-id="cleatew0n0004bk8w5fht9ll0" data-title="Dirichletprocess1" class="article-share-link">Share</a>
       
       
       
@@ -374,7 +1042,7 @@ x_1 \to p_1\to h_1,x_2\to p_2\to h_2\\
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2023/02/17/ContrastiveLearningOverview3/" data-id="cle9mgcua0003s48w229jc952" data-title="ContrastiveLearningOverview3" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2023/02/17/ContrastiveLearningOverview3/" data-id="cleatew0q0008bk8wd3vq17sn" data-title="ContrastiveLearningOverview3" class="article-share-link">Share</a>
       
       
       
@@ -509,7 +1177,7 @@ q=f_q(x^q)
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2023/02/17/ContrastiveLearningOverview1/" data-id="cle9mgcu20000s48wfulwdzp3" data-title="ContrastiveLearningOverview1" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2023/02/17/ContrastiveLearningOverview1/" data-id="cleatew0m0003bk8w9qvr9yi8" data-title="ContrastiveLearningOverview1" class="article-share-link">Share</a>
       
       
       
@@ -642,7 +1310,7 @@ c\times z_1\to Q_1,c\times z_2\to Q_2
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2023/02/14/ContrastiveLearningOverview2/" data-id="cle9mgcu70001s48wa3un4ifb" data-title="ContrastiveLearningOverview2" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2023/02/14/ContrastiveLearningOverview2/" data-id="cleatew0w000hbk8wh19y9ykq" data-title="ContrastiveLearningOverview2" class="article-share-link">Share</a>
       
       
       
@@ -686,7 +1354,7 @@ c\times z_1\to Q_1,c\times z_2\to Q_2
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2023/02/13/firstpost/" data-id="cle9mgcub0005s48w7515033q" data-title="How to post a new article and establish local site with hexo" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2023/02/13/firstpost/" data-id="cleatew0s000dbk8wa7ko200r" data-title="How to post a new article and establish local site with hexo" class="article-share-link">Share</a>
       
       
       
@@ -740,7 +1408,7 @@ c\times z_1\to Q_1,c\times z_2\to Q_2
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2023/02/13/hello-world/" data-id="cle9mgcue0008s48wag6lg50h" data-title="Hello World" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2023/02/13/hello-world/" data-id="cleatew0t000fbk8wff3l0mo5" data-title="Hello World" class="article-share-link">Share</a>
       
       
       
@@ -765,7 +1433,7 @@ c\times z_1\to Q_1,c\times z_2\to Q_2
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Contrastive-Learning-Deep-Learning-Unsupervised-Learning/" rel="tag">Contrastive Learning, Deep Learning, Unsupervised Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Random-Process-Dirichlet-Process/" rel="tag">Random Process, Dirichlet Process</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Use-of-Hexo/" rel="tag">Use of Hexo</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Algorithm-design-and-Analysis-Approximation-Algorithm/" rel="tag">Algorithm design and Analysis, Approximation Algorithm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Contrastive-Learning-Deep-Learning-Unsupervised-Learning/" rel="tag">Contrastive Learning, Deep Learning, Unsupervised Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Random-Process-Dirichlet-Process/" rel="tag">Random Process, Dirichlet Process</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Use-of-Hexo/" rel="tag">Use of Hexo</a></li></ul>
     </div>
   </div>
 
@@ -775,7 +1443,7 @@ c\times z_1\to Q_1,c\times z_2\to Q_2
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Contrastive-Learning-Deep-Learning-Unsupervised-Learning/" style="font-size: 20px;">Contrastive Learning, Deep Learning, Unsupervised Learning</a> <a href="/tags/Random-Process-Dirichlet-Process/" style="font-size: 10px;">Random Process, Dirichlet Process</a> <a href="/tags/Use-of-Hexo/" style="font-size: 10px;">Use of Hexo</a>
+      <a href="/tags/Algorithm-design-and-Analysis-Approximation-Algorithm/" style="font-size: 20px;">Algorithm design and Analysis, Approximation Algorithm</a> <a href="/tags/Contrastive-Learning-Deep-Learning-Unsupervised-Learning/" style="font-size: 15px;">Contrastive Learning, Deep Learning, Unsupervised Learning</a> <a href="/tags/Random-Process-Dirichlet-Process/" style="font-size: 10px;">Random Process, Dirichlet Process</a> <a href="/tags/Use-of-Hexo/" style="font-size: 10px;">Use of Hexo</a>
     </div>
   </div>
 
@@ -797,23 +1465,23 @@ c\times z_1\to Q_1,c\times z_2\to Q_2
       <ul>
         
           <li>
+            <a href="/2023/02/19/Approximation-Algorithm-Sparest-Cut/">Approximation Algorithm Sparest Cut</a>
+          </li>
+        
+          <li>
+            <a href="/2023/02/19/Approximation-Algorithm-TSP-Max-2-SAT/">Approximation Algorithm TSP Max 2-SAT</a>
+          </li>
+        
+          <li>
+            <a href="/2023/02/19/Approximation-Algorithm-Maxcut-and-Correlation-Cluster/">Approximation Algorithm Maxcut and Correlation Cluster</a>
+          </li>
+        
+          <li>
+            <a href="/2023/02/19/hardness-of-approximation/">hardness of approximation</a>
+          </li>
+        
+          <li>
             <a href="/2023/02/17/Dirichletprocess1/">Dirichletprocess1</a>
-          </li>
-        
-          <li>
-            <a href="/2023/02/17/ContrastiveLearningOverview3/">ContrastiveLearningOverview3</a>
-          </li>
-        
-          <li>
-            <a href="/2023/02/17/ContrastiveLearningOverview1/">ContrastiveLearningOverview1</a>
-          </li>
-        
-          <li>
-            <a href="/2023/02/14/ContrastiveLearningOverview2/">ContrastiveLearningOverview2</a>
-          </li>
-        
-          <li>
-            <a href="/2023/02/13/firstpost/">How to post a new article and establish local site with hexo</a>
           </li>
         
       </ul>
